@@ -73,7 +73,7 @@ public class AuthController {
 		)
 	})
 	@PostMapping("/login")
-	public ResponseEntity<BaseResponse<Void>> login(@RequestBody LoginRequest request, HttpServletResponse response) {
+	public ResponseEntity<BaseResponse<Void>> login(@Valid @RequestBody LoginRequest request, HttpServletResponse response) {
 		authService.login(request, response);
 
 		return ResponseEntity.status(HttpStatus.CREATED)
