@@ -1,6 +1,7 @@
 package com.sparta.backoffice.user.controller;
 
 import com.sparta.backoffice.global.dto.BaseResponse;
+import com.sparta.backoffice.global.security.CustomUserDetails;
 import com.sparta.backoffice.user.dto.request.PasswordUpdateRequestDto;
 import com.sparta.backoffice.user.dto.request.ProfileUpdateRequestDto;
 import com.sparta.backoffice.user.dto.request.UserDetailsRequestDto;
@@ -29,7 +30,7 @@ public class UserController {
     @PutMapping("/{userId}")
     public ResponseEntity<BaseResponse<ProfileUpdateResponseDto>> updateProfile(@PathVariable Long userId,
                                                                                 @RequestBody ProfileUpdateRequestDto requestDto,
-                                                                                @AuthenticationPrincipal UserDetails userDetails) {
+                                                                                @AuthenticationPrincipal CustomUserDetails userDetails) {
 
         UserDetailsRequestDto userDetailsRequestDto = new UserDetailsRequestDto();
         userDetailsRequestDto.setUsername(userDetails.getUsername());
@@ -45,7 +46,7 @@ public class UserController {
     @PutMapping("/{userId}/password")
     public ResponseEntity<BaseResponse<PasswordUpdateResponseDto>> updatePassword(@PathVariable Long userId,
                                                                                   @RequestBody PasswordUpdateRequestDto requestDto,
-                                                                                  @AuthenticationPrincipal UserDetails userDetails) {
+                                                                                  @AuthenticationPrincipal CustomUserDetails userDetails) {
 
         UserDetailsRequestDto userDetailsRequestDto = new UserDetailsRequestDto();
         userDetailsRequestDto.setUsername(userDetails.getUsername());
