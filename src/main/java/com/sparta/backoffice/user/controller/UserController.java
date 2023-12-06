@@ -59,9 +59,6 @@ public class UserController {
                 .body(new BaseResponse<>("변경 완료", HttpStatus.OK.value(), responseDto));
 
     }
-
-
-
 }
 
 

@@ -23,7 +23,4 @@ public class ProfileUpdateRequestDto {
 
     private final File profileImageUrl;
 
-
-
-
 }
