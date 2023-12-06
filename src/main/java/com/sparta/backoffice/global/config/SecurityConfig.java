@@ -29,6 +29,7 @@ public class SecurityConfig {
                         .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
                         .requestMatchers(PathRequest.toH2Console()).permitAll()
                         .requestMatchers("/pai/auth/**").permitAll()
+                        .requestMatchers("/api/posts/**").permitAll()
         );
 
         return http.build();

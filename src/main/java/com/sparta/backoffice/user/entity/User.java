@@ -14,7 +14,6 @@ import java.util.List;
 @Entity
 @Getter
 @Table(name = "users")
-@RequiredArgsConstructor
 @NoArgsConstructor
 public class User extends BaseEntity {
 
@@ -28,13 +27,13 @@ public class User extends BaseEntity {
     @Column(nullable = false)
     private String password;
 
-    @Column(nullable = false, unique = true)
+    @Column(unique = true)
     private String nickname;
 
-    @Column(nullable = false, name = "introduction")
+    @Column(name = "introduction")
     private String intro;
 
-    @Column(nullable = false, name = "profile_link")
+    @Column(name = "profile_link")
     private String link;
 
     @Column(name = "profile_image")
@@ -49,7 +48,6 @@ public class User extends BaseEntity {
     @Column(name = "naver_id")
     private Long naverId;
 
-
     @OneToMany(mappedBy = "user")
     private List<Post> postList;
 
@@ -57,6 +55,4 @@ public class User extends BaseEntity {
     // 좋아요와 1대다
 
     // 팔로우와 다대 1
-
-
 }

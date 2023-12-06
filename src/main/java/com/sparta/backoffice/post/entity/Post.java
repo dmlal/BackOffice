@@ -1,12 +1,14 @@
 package com.sparta.backoffice.post.entity;
 
 import com.sparta.backoffice.global.entity.BaseEntity;
+import com.sparta.backoffice.post.dto.PostRequestDto;
 import com.sparta.backoffice.user.entity.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -27,9 +29,31 @@ public class Post extends BaseEntity {
     private Post parentPost;
 
     @OneToMany(mappedBy = "parentPost")
-    private List<Post> childPosts;
+    private List<Post> childPosts = new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+
+    public Post(PostRequestDto requestDto, Post parentPost, User user) {
+        this.content = requestDto.getContent();
+        this.parentPost = parentPost;
+        this.user = user;
+    }
+
+    public Post(PostRequestDto requestDto, User user) {
+        this.content = requestDto.getContent();
+        this.user = user;
+    }
+
+    public void update(PostRequestDto requestDto) {
+        this.content = requestDto.getContent();
+    }
+
+    public void removeChilds() {
+        for (Post child : childPosts) {
+            child.parentPost = null;
+        }
+        childPosts.clear();
+    }
 }
