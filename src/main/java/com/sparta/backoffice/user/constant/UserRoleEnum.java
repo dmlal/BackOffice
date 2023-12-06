@@ -13,5 +13,4 @@ public enum UserRoleEnum {
 		this.authority = authority;
 	}
 
-
 }
