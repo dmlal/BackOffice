@@ -3,6 +3,8 @@ package com.sparta.backoffice.user.entity;
 
 import com.sparta.backoffice.global.entity.BaseEntity;
 import com.sparta.backoffice.post.entity.Post;
+import com.sparta.backoffice.user.constant.UserRoleEnum;
+
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -50,7 +52,17 @@ public class User extends BaseEntity {
 
     @OneToMany(mappedBy = "user")
     private List<Post> postList;
+    @Enumerated(EnumType.STRING)
+    private UserRoleEnum role;
 
+    public User(String username, String password) {
+        this.username = username;
+        this.password = password;
+    }
+
+    public UserRoleEnum getRole() {
+        return role;
+    }
 
     // 좋아요와 1대다
 
