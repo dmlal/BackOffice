@@ -26,7 +26,6 @@ import lombok.RequiredArgsConstructor;
 @Configuration
 public class SecurityConfig {
 	private final JwtProvider jwtProvider;
-	private final RedisUtils redisUtils;
 	private final CustomUserDetailService userDetailService;
 
 	@Bean
@@ -64,7 +63,7 @@ public class SecurityConfig {
 	}
 	@Bean
 	public JwtAuthorizationFilter jwtAuthorizationFilter() {
-		return new JwtAuthorizationFilter(jwtProvider, userDetailService, redisUtils);
+		return new JwtAuthorizationFilter(jwtProvider, userDetailService);
 	}
 
 	private static final String[] WHITE_LIST_URL = {
