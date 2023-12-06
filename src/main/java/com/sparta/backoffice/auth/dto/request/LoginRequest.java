@@ -12,7 +12,7 @@ import lombok.RequiredArgsConstructor;
 public class LoginRequest {
 	@Schema(description = "로그인 아이디", example = "username12")
 	@Pattern(
-		regexp = "^[a-z0-9]+$",
+		regexp = "^(?=.*[a-z])(?=.*[0-9]).[a-z0-9]*$",
 		message = "아이디는 알파벳 소문자, 숫자의 조합으로 입력해야합니다."
 	)
 	@Size(
@@ -24,8 +24,8 @@ public class LoginRequest {
 
 	@Schema(description = "로그인 비밀번호", example = "password12")
 	@Pattern(
-		regexp = "^^(?=.*[a-zA-Z])(?=.*\\\\d)(?=.*[@#$%^&+=!]).*$",
-		message = "비밀번호는 알파벳 대/소문자, 숫자, 특수문자의 조합으로 입력해야합니다."
+		regexp = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$ %^&*-])[a-zA-Z0-9@#$%^&+=!]*$",
+		message = "비밀번호는 영어 대/소문자, 숫자, 특수문자의 조합으로 입력해야합니다."
 	)
 	@Size(
 		min = 8,
