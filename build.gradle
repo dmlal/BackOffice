@@ -24,6 +24,8 @@ dependencies {
 
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 
+	annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
+
 	//MySQL
 	runtimeOnly 'com.mysql:mysql-connector-j'
 
@@ -52,4 +54,5 @@ dependencies {
 
 tasks.named('test') {
 	useJUnitPlatform()
+
 }
