@@ -54,7 +54,6 @@ public class User extends BaseEntity {
     @Column(name = "naver_id")
     private Long naverId;
 
-
     @OneToMany(mappedBy = "user")
     private List<Post> postList;
     @Enumerated(EnumType.STRING)
@@ -95,6 +94,7 @@ public class User extends BaseEntity {
     public User(String username, String password) {
         this.username = username;
         this.password = password;
+        this.role = UserRoleEnum.USER;
     }
 
     public UserRoleEnum getRole() {
@@ -104,6 +104,4 @@ public class User extends BaseEntity {
     // 좋아요와 1대다
 
     // 팔로우와 다대 1
-
-
 }
