@@ -1,6 +1,7 @@
 package com.sparta.backoffice.global.dto;
 
 
+import com.sparta.backoffice.global.constant.ResponseCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -13,5 +14,13 @@ public class BaseResponse<T> {
 
     public static <T> BaseResponse<T> of(String msg, Integer statusCode, T data) {
         return new BaseResponse<>(msg, statusCode, data);
+    }
+
+    public static <T> BaseResponse<T> of(ResponseCode responseCode, T data) {
+        return new BaseResponse<>(
+                responseCode.getMessage(),
+                responseCode.getHttpStatus(),
+                data
+        );
     }
 }
