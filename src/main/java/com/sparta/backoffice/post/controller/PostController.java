@@ -32,7 +32,7 @@ public class PostController {
     public ResponseEntity<BaseResponse<PostResponseDto>> updatePost(@PathVariable Long postId, @RequestBody @Valid PostRequestDto requestDto, @AuthUser User user) {
         PostResponseDto postResponseDto = postService.updatePost(requestDto, postId, user);
         return ResponseEntity.status(HttpStatus.OK).body(
-                BaseResponse.of(MODIFIYED_POST, postResponseDto));
+                BaseResponse.of(MODIFIED_POST, postResponseDto));
     }
 
     @DeleteMapping("/{postId}")
@@ -41,5 +41,4 @@ public class PostController {
         return ResponseEntity.status(HttpStatus.OK).body(
                 BaseResponse.of(DELETED_POST, null));
     }
-
 }
