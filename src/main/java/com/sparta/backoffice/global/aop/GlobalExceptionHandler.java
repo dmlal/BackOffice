@@ -42,7 +42,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ApiException.class)
     public ResponseEntity<BaseResponse<Void>> runtimeExceptionHandler(ApiException ex) {
         log.error("Runtime Exceptions :", ex);
-        return ResponseEntity.internalServerError()
+        return ResponseEntity.status(ex.getErrorCode().getHttpStatus())
             .body(
                 BaseResponse.of(
                     ex.getErrorCode().getMessage(),
