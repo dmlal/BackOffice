@@ -58,6 +58,7 @@ public class User extends BaseEntity {
     public User(String username, String password) {
         this.username = username;
         this.password = password;
+        this.role = UserRoleEnum.USER;
     }
 
     public UserRoleEnum getRole() {
