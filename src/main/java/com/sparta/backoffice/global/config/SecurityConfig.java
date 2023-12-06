@@ -40,11 +40,12 @@ public class SecurityConfig {
 
 		//url permit
 		http.authorizeHttpRequests(auth ->
-			auth
-				.requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
-				.requestMatchers(PathRequest.toH2Console()).permitAll()
-				.requestMatchers(this.whiteListMapToMvcRequestMatchers(mvc)).permitAll() //허용 url 리스트
-				.requestMatchers("/api/auth/**").permitAll()
+				auth
+						.requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
+						.requestMatchers(PathRequest.toH2Console()).permitAll()
+						.requestMatchers(this.whiteListMapToMvcRequestMatchers(mvc)).permitAll() //허용 url 리스트
+						.requestMatchers("/api/auth/**").permitAll()
+						.anyRequest().authenticated()
 		);
 
 		// 필터 관리

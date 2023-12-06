@@ -5,18 +5,18 @@ import com.sparta.backoffice.global.entity.BaseEntity;
 import com.sparta.backoffice.post.entity.Post;
 import com.sparta.backoffice.user.constant.UserRoleEnum;
 
+import com.sparta.backoffice.user.dto.request.ProfileUpdateRequestDto;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
 @Entity
 @Getter
 @Table(name = "users")
-@NoArgsConstructor
+@RequiredArgsConstructor
 public class User extends BaseEntity {
 
     @Id
@@ -29,13 +29,13 @@ public class User extends BaseEntity {
     @Column(nullable = false)
     private String password;
 
-    @Column(unique = true)
+    @Column(nullable = false, unique = true)
     private String nickname;
 
-    @Column(name = "introduction")
+    @Column(nullable = false, name = "introduction")
     private String intro;
 
-    @Column(name = "profile_link")
+    @Column(nullable = false, name = "profile_link")
     private String link;
 
     @Column(name = "profile_image")
@@ -55,17 +55,36 @@ public class User extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private UserRoleEnum role;
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<PasswordHistory> passwordHistories = new ArrayList<>();
+
+    // a
+
+    public User updateProfile(ProfileUpdateRequestDto requestDto) {
+        this.nickname = requestDto.getNickname();
+        this.intro = requestDto.getIntro();
+        this.link = requestDto.getLink();
+        this.isPrivate = requestDto.getIsPrivate();
+
+        return this;
+    }
+
+    public User updatePassword(String password) {
+        this.password = password;
+
+        return this;
+    }
+
     public User(String username, String password) {
         this.username = username;
         this.password = password;
         this.role = UserRoleEnum.USER;
     }
 
-    public UserRoleEnum getRole() {
-        return role;
-    }
 
     // 좋아요와 1대다
 
     // 팔로우와 다대 1
+
+
 }
