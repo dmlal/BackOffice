@@ -41,16 +41,4 @@ public class PostController {
         return ResponseEntity.status(HttpStatus.OK).body(
                 BaseResponse.of(DELETED_POST, null));
     }
-
-    @GetMapping("/users/{userId}/likes/posts")
-    public ResponseEntity<BaseResponse<Object>> getUserLikedPosts(@PathVariable Long userId) {
-        return ResponseEntity.status(HttpStatus.OK).body(
-                BaseResponse.of(
-                        "좋아요 누른 게시글 목록 정보 조회 성공",
-                        HttpStatus.OK.value(),
-                        null
-                )
-        );
-    }
-
 }

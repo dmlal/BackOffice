@@ -9,14 +9,13 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 @Getter
-@NoArgsConstructor
-@Setter
 @ConfigurationProperties(prefix = "jwt")
+@RequiredArgsConstructor
 @Validated
 public class JwtProperties {
 
 	@NotBlank
-	private String secretKey;
-	private Long accessTokenExpiration;
-	private Long refreshTokenExpiration;
+	private final String secretKey;
+	private final Long accessTokenExpiration;
+	private final Long refreshTokenExpiration;
 }

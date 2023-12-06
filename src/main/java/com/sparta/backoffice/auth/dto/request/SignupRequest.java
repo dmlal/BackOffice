@@ -14,7 +14,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 @Getter
-@RequiredArgsConstructor //
+@RequiredArgsConstructor
 public class SignupRequest {
 	@Schema(description = "로그인 아이디", example = "username12")
 	@Pattern(
