@@ -34,12 +34,8 @@ public class PostService {
 
         if (requestDto.getParentPostId() != null) {
             //부모가 존재
-            Post parentPost = postRepository.findById(requestDto.getParentPostId()).orElseThrow(
+            Post parentPost = postRepository.findByIdAndIsDeletedFalse(requestDto.getParentPostId()).orElseThrow(
                     () -> new ApiException(CAN_NOT_REPLY_POST_ERROR));
-
-            if (parentPost.isDeleted()) {
-                throw new ApiException(CAN_NOT_REPLY_DELETED_POST_ERROR);
-            }
 
             post = new Post(requestDto, parentPost, user);
 
@@ -54,12 +50,10 @@ public class PostService {
     @Transactional
     public PostResponseDto updatePost(PostRequestDto requestDto, Long postId, User user) {
 
-        Post post = postRepository.findById(postId).orElseThrow(
+        Post post = postRepository.findByIdAndIsDeletedFalse(postId).orElseThrow(
                 () -> new ApiException(NOT_FOUND_POST_ERROR));
 
-        if (post.isDeleted()) {
-            throw new ApiException(DELETED_POST_ERROR);
-        }
+
 
         if (!post.getUser().getId().equals(user.getId())) {
             throw new ApiException(CAN_NOT_MODIFY_ERROR);
@@ -76,12 +70,9 @@ public class PostService {
     public void deletePost(Long postId, User user) {
         List<Long> tobedeletedList = new ArrayList<>();//삭제 예정 리스트 초기화
 
-        Post post = postRepository.findById(postId).orElseThrow(
+        Post post = postRepository.findByIdAndIsDeletedFalse(postId).orElseThrow(
                 () -> new ApiException(NOT_FOUND_POST_ERROR));
 
-        if (post.isDeleted()) {
-            throw new ApiException(DELETED_POST_ERROR);
-        }
 
         if (!post.getUser().getId().equals(user.getId())) {
             throw new ApiException(CAN_NOT_DELETE_ERROR);
