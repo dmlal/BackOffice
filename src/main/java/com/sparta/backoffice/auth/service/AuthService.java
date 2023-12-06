@@ -26,54 +26,54 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class AuthService {
-	private final UserRepository userRepository;
-	private final PasswordEncoder passwordEncoder;
-	private final JwtProvider jwtProvider;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtProvider jwtProvider;
 
-	@Transactional
-	public void signup(SignupRequest request) {
+    @Transactional
+    public void signup(SignupRequest request) {
 
-		if (userRepository.existsByUsername(request.getUsername())) {
-			throw new ApiException(ErrorCode.ALREADY_EXIST_USERNAME);
-		}
+        if (userRepository.existsByUsername(request.getUsername())) {
+            throw new ApiException(ErrorCode.ALREADY_EXIST_USERNAME);
+        }
 
-		userRepository.save(request.toEntity(passwordEncoder));
-	}
+        userRepository.save(request.toEntity(passwordEncoder));
+    }
 
-	public void login(LoginRequest request, HttpServletResponse response) {
-		User user = findUser(request);
+    public void login(LoginRequest request, HttpServletResponse response) {
+        User user = findUser(request);
 
-		Authentication authentication = createAuthentication(request.getPassword(), user);
-		setAuthentication(authentication);
+        Authentication authentication = createAuthentication(request.getPassword(), user);
+        setAuthentication(authentication);
 
-		//Response 세팅
-		TokenDto tokenDto = jwtProvider.createToken(user);
-		jwtProvider.setTokenResponse(tokenDto, response);
-	}
-
-
-	public User findUser(LoginRequest request) {
-		return userRepository.findByUsername(request.getUsername())
-			.orElseThrow(() -> new ApiException(USER_NOT_FOUND));
-	}
-
-	private void checkPassword(String rawPassword, String encodedPassword) {
-		if (!passwordEncoder.matches(rawPassword, encodedPassword)) {
-			throw new ApiException(USER_NOT_FOUND);
-		}
-	}
-
-	// 인증 객체 생성
-	private Authentication createAuthentication(String rawPassword, User user) {
-		checkPassword(rawPassword, user.getPassword());
-
-		CustomUserDetails userDetails = new CustomUserDetails(user);
-		return new UsernamePasswordAuthenticationToken(userDetails, user.getPassword(), userDetails.getAuthorities());
-	}
+        //Response 세팅
+        TokenDto tokenDto = jwtProvider.createToken(user);
+        jwtProvider.setTokenResponse(tokenDto, response);
+    }
 
 
-	private void setAuthentication(Authentication authentication) {
-		SecurityContext context = SecurityContextHolder.getContext();
-		context.setAuthentication(authentication);
-	}
+    public User findUser(LoginRequest request) {
+        return userRepository.findByUsername(request.getUsername())
+                .orElseThrow(() -> new ApiException(NOT_FOUND_USER));
+    }
+
+    private void checkPassword(String rawPassword, String encodedPassword) {
+        if (!passwordEncoder.matches(rawPassword, encodedPassword)) {
+            throw new ApiException(NOT_FOUND_USER);
+        }
+    }
+
+    // 인증 객체 생성
+    private Authentication createAuthentication(String rawPassword, User user) {
+        checkPassword(rawPassword, user.getPassword());
+
+        CustomUserDetails userDetails = new CustomUserDetails(user);
+        return new UsernamePasswordAuthenticationToken(userDetails, user.getPassword(), userDetails.getAuthorities());
+    }
+
+
+    private void setAuthentication(Authentication authentication) {
+        SecurityContext context = SecurityContextHolder.getContext();
+        context.setAuthentication(authentication);
+    }
 }

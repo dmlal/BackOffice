@@ -20,9 +20,6 @@ public class PasswordHistory extends BaseEntity {
     @Column(nullable = false)
     private String password;
 
-    @Column(nullable = false)
-    private LocalDateTime modifiedAt;
-
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;

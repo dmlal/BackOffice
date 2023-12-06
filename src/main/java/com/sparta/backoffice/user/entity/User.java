@@ -5,14 +5,10 @@ import com.sparta.backoffice.global.entity.BaseEntity;
 import com.sparta.backoffice.post.entity.Post;
 import com.sparta.backoffice.user.constant.UserRoleEnum;
 
-import com.sparta.backoffice.user.dto.request.PasswordUpdateRequestDto;
 import com.sparta.backoffice.user.dto.request.ProfileUpdateRequestDto;
-import com.sparta.backoffice.user.dto.response.PasswordUpdateResponseDto;
-import com.sparta.backoffice.user.dto.response.ProfileUpdateResponseDto;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,13 +29,13 @@ public class User extends BaseEntity {
     @Column(nullable = false)
     private String password;
 
-    @Column(unique = true)
+    @Column(nullable = false, unique = true)
     private String nickname;
 
-    @Column(name = "introduction")
+    @Column(nullable = false, name = "introduction")
     private String intro;
 
-    @Column(name = "profile_link")
+    @Column(nullable = false, name = "profile_link")
     private String link;
 
     @Column(name = "profile_image")
@@ -54,7 +50,6 @@ public class User extends BaseEntity {
     @Column(name = "naver_id")
     private Long naverId;
 
-
     @OneToMany(mappedBy = "user")
     private List<Post> postList;
     @Enumerated(EnumType.STRING)
@@ -63,19 +58,6 @@ public class User extends BaseEntity {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<PasswordHistory> passwordHistories = new ArrayList<>();
 
-//    @Builder
-//    public User(Long id, String username, String password, String nickname, String intro, String link, String profileImageUrl, Boolean isPrivate, Long kakaoId, Long naverId) {
-//        this.id = id;
-//        this.username = username;
-//        this.password = password;
-//        this.nickname = nickname;
-//        this.intro = intro;
-//        this.link = link;
-//        this.profileImageUrl = profileImageUrl;
-//        this.isPrivate = isPrivate;
-//        this.kakaoId = kakaoId;
-//        this.naverId = naverId;
-//    }
 
     public User updateProfile(ProfileUpdateRequestDto requestDto) {
         this.nickname = requestDto.getNickname();
@@ -95,11 +77,9 @@ public class User extends BaseEntity {
     public User(String username, String password) {
         this.username = username;
         this.password = password;
+        this.role = UserRoleEnum.USER;
     }
 
-    public UserRoleEnum getRole() {
-        return role;
-    }
 
     // 좋아요와 1대다
 

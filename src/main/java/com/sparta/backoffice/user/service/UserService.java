@@ -37,7 +37,7 @@ public class UserService {
         checkUserPermission(user, userDetailsRequestDto);
 
         String newNickname = requestDto.getNickname();
-        if(!newNickname.equals(user.getNickname()) && userRepository.existsBynickname(newNickname)){  // 기존닉네임과 같은지 , 닉네임이 중복인지
+        if(!newNickname.equals(user.getNickname()) && userRepository.existsByNickname(newNickname)){  // 기존닉네임과 같은지 , 닉네임이 중복인지
             throw new IllegalArgumentException("닉네임을 변경할 수 없습니다.");
         }
 

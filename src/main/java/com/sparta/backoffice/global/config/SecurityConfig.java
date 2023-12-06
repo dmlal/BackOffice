@@ -26,7 +26,6 @@ import lombok.RequiredArgsConstructor;
 @Configuration
 public class SecurityConfig {
 	private final JwtProvider jwtProvider;
-	private final RedisUtils redisUtils;
 	private final CustomUserDetailService userDetailService;
 
 	@Bean
@@ -41,11 +40,12 @@ public class SecurityConfig {
 
 		//url permit
 		http.authorizeHttpRequests(auth ->
-			auth
-				.requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
-				.requestMatchers(PathRequest.toH2Console()).permitAll()
-				.requestMatchers(this.whiteListMapToMvcRequestMatchers(mvc)).permitAll() //허용 url 리스트
-				.requestMatchers("/api/auth/**").permitAll()
+				auth
+						.requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
+						.requestMatchers(PathRequest.toH2Console()).permitAll()
+						.requestMatchers(this.whiteListMapToMvcRequestMatchers(mvc)).permitAll() //허용 url 리스트
+						.requestMatchers("/api/auth/**").permitAll()
+						.anyRequest().authenticated()
 		);
 
 		// 필터 관리
@@ -64,7 +64,7 @@ public class SecurityConfig {
 	}
 	@Bean
 	public JwtAuthorizationFilter jwtAuthorizationFilter() {
-		return new JwtAuthorizationFilter(jwtProvider, userDetailService, redisUtils);
+		return new JwtAuthorizationFilter(jwtProvider, userDetailService);
 	}
 
 	private static final String[] WHITE_LIST_URL = {

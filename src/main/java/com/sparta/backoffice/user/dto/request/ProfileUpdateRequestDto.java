@@ -21,6 +21,6 @@ public class ProfileUpdateRequestDto {
 
     private final Boolean isPrivate;
 
-    private final File profileImageUrl;
+//    private final String profileImageUrl;
 
 }

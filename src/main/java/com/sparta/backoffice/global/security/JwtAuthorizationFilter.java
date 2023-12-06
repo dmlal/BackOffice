@@ -27,20 +27,16 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
 	private final JwtProvider jwtProvider;
 	private final CustomUserDetailService userDetailsService;
-	private final RedisUtils redisUtils;
 
 	@Override
-	protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain filterChain) throws ServletException, IOException {
+	protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain filterChain) throws
+		ServletException,
+		IOException {
 		String tokenValue = jwtProvider.getTokenFromRequestHeader(req);
 
 		if (StringUtils.hasText(tokenValue) && jwtProvider.validateToken(tokenValue)) {
 			Claims info = jwtProvider.getUserInfoFromToken(tokenValue);
-			String logOutToken = redisUtils.getKey("Logout:" + info.getSubject());
-
-			//Logout 토큰 검증
-			if (!StringUtils.hasText(logOutToken) || !tokenValue.equals(logOutToken)) {
-				setAuthentication(info.getSubject());
-			}
+			setAuthentication(info.getSubject());
 		}
 
 		filterChain.doFilter(req, res);

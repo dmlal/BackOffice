@@ -52,8 +52,7 @@ public class AuthController {
 		return ResponseEntity.status(HttpStatus.CREATED)
 			.body(
 				BaseResponse.of(
-					SIGNUP.getMessage(),
-					SIGNUP.getHttpStatus(),
+					SIGNUP,
 					null
 				)
 			);
@@ -79,8 +78,7 @@ public class AuthController {
 		return ResponseEntity.status(HttpStatus.CREATED)
 			.body(
 				BaseResponse.of(
-					LOGIN.getMessage(),
-					LOGIN.getHttpStatus(),
+					LOGIN,
 					null
 				)
 			);
