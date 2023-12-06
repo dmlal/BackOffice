@@ -35,6 +35,9 @@ public class Post extends BaseEntity {
     @JoinColumn(name = "user_id")
     private User user;
 
+    @Column
+    private boolean isDeleted = false;
+
     public Post(PostRequestDto requestDto, Post parentPost, User user) {
         this.content = requestDto.getContent();
         this.parentPost = parentPost;
@@ -50,10 +53,7 @@ public class Post extends BaseEntity {
         this.content = requestDto.getContent();
     }
 
-    public void removeChilds() {
-        for (Post child : childPosts) {
-            child.parentPost = null;
-        }
-        childPosts.clear();
+    public void changeStateIsDeleted() {
+        this.isDeleted = true;
     }
 }

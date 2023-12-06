@@ -30,13 +30,13 @@ public class User extends BaseEntity {
     @Column(nullable = false)
     private String password;
 
-    @Column(nullable = false, unique = true)
+    @Column(unique = true)
     private String nickname;
 
-    @Column(nullable = false, name = "introduction")
+    @Column(name = "introduction")
     private String intro;
 
-    @Column(nullable = false, name = "profile_link")
+    @Column(name = "profile_link")
     private String link;
 
     @Column(name = "profile_image")
