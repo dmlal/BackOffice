@@ -32,7 +32,7 @@ public class PostController {
     public ResponseEntity<BaseResponse<PostResponseDto>> updatePost(@PathVariable Long postId, @RequestBody @Valid PostRequestDto requestDto, @AuthUser User user) {
         PostResponseDto postResponseDto = postService.updatePost(requestDto, postId, user);
         return ResponseEntity.status(HttpStatus.OK).body(
-                BaseResponse.of(MODIFIYED_POST, postResponseDto));
+                BaseResponse.of(MODIFIED_POST, postResponseDto));
     }
 
     @DeleteMapping("/{postId}")
@@ -40,6 +40,17 @@ public class PostController {
         postService.deletePost(postId, user);
         return ResponseEntity.status(HttpStatus.OK).body(
                 BaseResponse.of(DELETED_POST, null));
+    }
+
+    @GetMapping("/users/{userId}/likes/posts")
+    public ResponseEntity<BaseResponse<Object>> getUserLikedPosts(@PathVariable Long userId) {
+        return ResponseEntity.status(HttpStatus.OK).body(
+                BaseResponse.of(
+                        "좋아요 누른 게시글 목록 정보 조회 성공",
+                        HttpStatus.OK.value(),
+                        null
+                )
+        );
     }
 
 }

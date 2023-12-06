@@ -1,5 +1,8 @@
 package com.sparta.backoffice.auth.dto.request;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.sparta.backoffice.user.entity.User;
@@ -11,7 +14,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 @Getter
-@RequiredArgsConstructor
+@RequiredArgsConstructor //
 public class SignupRequest {
 	@Schema(description = "로그인 아이디", example = "username12")
 	@Pattern(
