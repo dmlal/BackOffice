@@ -7,12 +7,14 @@ import lombok.*;
 @RequiredArgsConstructor
 public class PasswordUpdateRequestDto {
 
-    // 정규식 특수문자는 일단 !만 넣어둠.  후에 회원가입과 비교하여 변경
-    @Pattern(regexp = "^[a-zA-Z0-9!]{8,20}$")
+    // 기존 패스워드라서 이미 정규식 통과.
     private final String password;
 
 
-    @Pattern(regexp = "^[a-zA-Z0-9!]{8,20}$")
+    @Pattern(
+            regexp = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$ %^&*-])[a-zA-Z0-9@#$%^&+=!]*$",
+            message = "비밀번호는 영어 대/소문자, 숫자, 특수문자의 조합으로 입력해야합니다."
+    )
     private final String newPassword;
 }
 
