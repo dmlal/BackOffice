@@ -6,8 +6,13 @@ import com.sparta.backoffice.post.dto.PostResponseDto;
 import com.sparta.backoffice.post.entity.Post;
 import com.sparta.backoffice.post.repository.PostRepository;
 import com.sparta.backoffice.user.entity.User;
+import com.sparta.backoffice.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,6 +27,7 @@ import static com.sparta.backoffice.global.constant.ErrorCode.*;
 public class PostService {
 
     private final PostRepository postRepository;
+    private final UserRepository userRepository;
 
     public PostResponseDto createPost(PostRequestDto requestDto, User user) {
         Post post;
@@ -124,4 +130,20 @@ public class PostService {
         return true;
     }
 
+
+    @Transactional(readOnly = true)
+    public List<PostResponseDto> getPostsByUser(Long userId, Integer cursor, Integer size, String dir) {
+        User user = userRepository.findById(userId).orElseThrow(
+                () -> new ApiException(NOT_FOUND_USER_ERROR)
+        );
+
+        Sort sort = Sort.by(dir.equalsIgnoreCase("desc") ?
+                Sort.Direction.DESC : Sort.Direction.ASC, "createdAt");
+
+        Pageable pageable = PageRequest.of(cursor, size, sort);
+
+        Page<Post> posts = postRepository.findByUserAndParentPostIsNullAndIsDeletedFalse(user, pageable);
+
+        return posts.stream().map(PostResponseDto::new).toList();
+    }
 }

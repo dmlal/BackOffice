@@ -15,6 +15,7 @@ public class PostResponseDto {
     UserSimpleDto userSimpleDto;
     Integer replyCount;
     Long parentPostId;
+    Integer likesCount;
 
     public PostResponseDto(Post post) {
         this.id = post.getId();
@@ -25,5 +26,6 @@ public class PostResponseDto {
         if (post.getParentPost() != null)
             this.parentPostId = post.getParentPost().getId();
         this.userSimpleDto = new UserSimpleDto(post.getUser());
+        this.likesCount = post.getLikes().size();
     }
 }

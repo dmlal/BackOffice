@@ -15,7 +15,6 @@ public enum ErrorCode {
     SELF_LIKE_ERROR(400, "자신의 게시글은 좋아요 할 수 없습니다."),
 
     /* 404 NOT_FOUND : Resource 를 찾을 수 없음 */
-    NOT_FOUND_USER(404, "유저를 찾을 수 없습니다."),
     CAN_NOT_REPLY_POST_ERROR(404, "존재 하지 않는 게시글에 답글을 달 수 없습니다."),
     CAN_NOT_REPLY_DELETED_POST_ERROR(404, "삭제된 게시물에 답글을 달 수 없습니다."),
     NOT_FOUND_POST_ERROR(404, "존재하지 않는 게시글 입니다."),
