@@ -1,5 +1,8 @@
 package com.sparta.backoffice.auth.dto.request;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.sparta.backoffice.user.entity.User;
