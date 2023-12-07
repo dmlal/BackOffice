@@ -33,16 +33,15 @@ public class PostController {
     @PutMapping("/{postId}")
     public ResponseEntity<BaseResponse<PostResponseDto>> updatePost(@PathVariable Long postId, @RequestBody @Valid PostRequestDto requestDto, @AuthUser User user) {
         PostResponseDto postResponseDto = postService.updatePost(requestDto, postId, user);
-        String str = UserRoleEnum.ADMIN.getAuthority();
         return ResponseEntity.status(HttpStatus.OK).body(
                 BaseResponse.of(MODIFIED_POST, postResponseDto));
     }
 
     @DeleteMapping("/{postId}")
-    public ResponseEntity<BaseResponse<Object>> updatePost(@PathVariable Long postId, @AuthUser User user) {
+    public ResponseEntity<BaseResponse<String>> deletePost(@PathVariable Long postId, @AuthUser User user) {
         postService.deletePost(postId, user);
         return ResponseEntity.status(HttpStatus.OK).body(
-                BaseResponse.of(DELETED_POST, null));
+                BaseResponse.of(DELETED_POST, ""));
     }
 
     //내가 팔로잉한 사람이 아니라면 볼 수 없게 처리해야한다.
