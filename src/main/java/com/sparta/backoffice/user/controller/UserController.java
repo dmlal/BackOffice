@@ -19,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import static com.sparta.backoffice.global.constant.ResponseCode.UPDATE_PASSWORD;
+import static com.sparta.backoffice.global.constant.ResponseCode.UPDATE_PROFILE;
 
 @RestController
 @RequestMapping("/api/users")
@@ -61,7 +62,7 @@ public class UserController {
 
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(BaseResponse.of(UPDATE_PASSWORD, responseDto));
+                .body(BaseResponse.of(UPDATE_PROFILE, responseDto));
     }
 
     @Operation(summary = "비밀번호 수정", description = "비밀번호 수정 API")
