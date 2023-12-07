@@ -73,7 +73,7 @@ public class UserService {
 
     private User foundUser(Long userId) {
         return userRepository.findById(userId).orElseThrow(() ->
-                new ApiException(NOT_FOUND_USER));
+                new ApiException(NOT_FOUND_USER_ERROR));
     }
 
     private void checkUserPermission(User user, User authUser ) {

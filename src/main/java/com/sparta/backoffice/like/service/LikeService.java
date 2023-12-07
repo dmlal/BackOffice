@@ -7,6 +7,7 @@ import com.sparta.backoffice.like.repository.LikeRepository;
 import com.sparta.backoffice.like.entity.Like;
 import com.sparta.backoffice.post.entity.Post;
 import com.sparta.backoffice.post.repository.PostRepository;
+import com.sparta.backoffice.user.dto.UserSimpleDto;
 import com.sparta.backoffice.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -33,7 +34,7 @@ public class LikeService {
 
     @Transactional
     public void like(User user, Long postId) {
-        Post post = postRepository.findById(postId)
+        Post post = postRepository.findByIdAndIsDeletedFalse(postId)
                 .orElseThrow(() -> new ApiException(ErrorCode.NOT_FOUND_POST_ERROR));
         // 자기 글에 좋아요 못함
         if (Objects.equals(post.getUser().getId(), user.getId())) {
@@ -58,7 +59,7 @@ public class LikeService {
     }
 
     @Transactional(readOnly = true)
-    public List<LikeUserResponseDto> getLikedUsers(
+    public List<UserSimpleDto> getLikedUsers(
             Long postId,
             Integer cursor,
             Integer size,
@@ -74,13 +75,9 @@ public class LikeService {
         Pageable pageable = PageRequest.of(cursor, size, sort);
         Page<Like> likes = likeRepository.findAllByPostId(postId, pageable);
 
-        List<LikeUserResponseDto> likedUsers = likes.stream().map((like) -> {
+        List<UserSimpleDto> likedUsers = likes.stream().map((like) -> {
             User user = like.getUser();
-            return new LikeUserResponseDto(
-                    user.getNickname(),
-                    user.getIntro(),
-                    user.getProfileImageUrl()
-            );
+            return new UserSimpleDto(user);
         }).toList();
 
         return likedUsers;
