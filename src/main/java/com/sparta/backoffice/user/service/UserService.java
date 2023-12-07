@@ -1,9 +1,8 @@
 package com.sparta.backoffice.user.service;
 
+import com.sparta.backoffice.global.exception.ApiException;
 import com.sparta.backoffice.user.dto.request.PasswordUpdateRequestDto;
 import com.sparta.backoffice.user.dto.request.ProfileUpdateRequestDto;
-import com.sparta.backoffice.user.dto.request.UserDetailsRequestDto;
-import com.sparta.backoffice.user.dto.response.PasswordUpdateResponseDto;
 import com.sparta.backoffice.user.dto.response.ProfileUpdateResponseDto;
 import com.sparta.backoffice.user.entity.PasswordHistory;
 import com.sparta.backoffice.user.entity.User;
@@ -12,13 +11,13 @@ import com.sparta.backoffice.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+
+import static com.sparta.backoffice.global.constant.ErrorCode.*;
 
 @Service
 public class UserService {
@@ -31,14 +30,14 @@ public class UserService {
     private PasswordEncoder passwordEncoder;
 
     @Transactional
-    public ProfileUpdateResponseDto updateProfile(Long userId, ProfileUpdateRequestDto requestDto, UserDetailsRequestDto userDetailsRequestDto) {
+    public ProfileUpdateResponseDto updateProfile(Long userId, ProfileUpdateRequestDto requestDto, User authUser) {
         User user = foundUser(userId);
 
-        checkUserPermission(user, userDetailsRequestDto);
+        checkUserPermission(user, authUser);
 
         String newNickname = requestDto.getNickname();
         if(!newNickname.equals(user.getNickname()) && userRepository.existsByNickname(newNickname)){  // 기존닉네임과 같은지 , 닉네임이 중복인지
-            throw new IllegalArgumentException("닉네임을 변경할 수 없습니다.");
+            throw new ApiException(CAN_NOT_CHANGE_NICKNAME);
         }
 
         User newProfile = user.updateProfile(requestDto);
@@ -49,10 +48,10 @@ public class UserService {
     }
 
     @Transactional
-    public PasswordUpdateResponseDto updatePassword(Long userId, PasswordUpdateRequestDto requestDto, UserDetailsRequestDto userDetailsRequestDto) {
+    public void updatePassword(Long userId, PasswordUpdateRequestDto requestDto, User authUser) {
         User user = foundUser(userId);
 
-        checkUserPermission(user, userDetailsRequestDto);
+        checkUserPermission(user, authUser);
 
         Pageable recentPasswords = PageRequest.of(0, 3);
         List<PasswordHistory> recentThreePasswords = passwordHistoryRepository.findTop3ByUserIdOrderByModifiedAtDesc(userId, recentPasswords);
@@ -61,7 +60,7 @@ public class UserService {
 
         for (PasswordHistory passwordHistory : recentThreePasswords) {
             if (passwordEncoder.matches(requestDto.getPassword(), passwordHistory.getPassword())) {
-                throw new IllegalArgumentException("최근에 사용한 비밀번호입니다.");
+               throw new ApiException(RECENTLY_USED_PASSWORD);
             }
         }
 
@@ -70,19 +69,16 @@ public class UserService {
 
         PasswordHistory updatedPasswordHistory = new PasswordHistory(user, encodedNewPassword);
         passwordHistoryRepository.save(updatedPasswordHistory);
-
-
-        return new PasswordUpdateResponseDto(user);
     }
 
     private User foundUser(Long userId) {
         return userRepository.findById(userId).orElseThrow(() ->
-                new UsernameNotFoundException("존재하지 않는 유저입니다."));
+                new ApiException(NOT_FOUND_USER_ERROR));
     }
 
-    private void checkUserPermission(User user, UserDetailsRequestDto userDetailsRequestDto ) {
-        if (!user.getUsername().equals(userDetailsRequestDto.getUsername())) {
-            throw new AccessDeniedException("권한이 없습니다.");
+    private void checkUserPermission(User user, User authUser ) {
+        if (!user.getUsername().equals(authUser.getUsername())) {
+            throw new ApiException(DENIED_AUTHORITY);
         }
     }
 }

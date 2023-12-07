@@ -29,6 +29,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
 @Getter
 @Slf4j(topic = "Jwt 유틸")
 @RequiredArgsConstructor
@@ -42,12 +43,14 @@ public class JwtProvider {
 	private final SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
 	private final JwtProperties jwtProperties;
 	private String secretKey;
+	private String adminKey;
 	private Long accessTokenExpiration;
 	private Long refreshTokenExpiration;
 	private Key key;
 
 	@PostConstruct
 	public void init() {
+		adminKey = jwtProperties.getAdminKey();
 		secretKey = jwtProperties.getSecretKey();
 		accessTokenExpiration = jwtProperties.getAccessTokenExpiration();
 		refreshTokenExpiration = jwtProperties.getRefreshTokenExpiration();
@@ -94,10 +97,10 @@ public class JwtProvider {
 	// 토큰에서 사용자 정보 Claim 가져오기
 	public Claims getUserInfoFromToken(String token) {
 		return Jwts.parserBuilder()
-			.setSigningKey(key)
-			.build()
-			.parseClaimsJws(token)
-			.getBody();
+				.setSigningKey(key)
+				.build()
+				.parseClaimsJws(token)
+				.getBody();
 	}
 
 	//토큰 생성
@@ -105,22 +108,22 @@ public class JwtProvider {
 		Date date = new Date();
 
 		String accessToken =
-			Jwts.builder()
-				.setSubject(username) // 사용자 식별자값(ID)
-				.claim(AUTHORIZATION_KEY, role) // 사용자 권한
-				.setExpiration(new Date(date.getTime() + accessTokenExpiration)) // 만료 시간
-				.setIssuedAt(date) // 발급일
-				.signWith(key, signatureAlgorithm) // 암호화 알고리즘
-				.compact();
+				Jwts.builder()
+						.setSubject(username) // 사용자 식별자값(ID)
+						.claim(AUTHORIZATION_KEY, role) // 사용자 권한
+						.setExpiration(new Date(date.getTime() + accessTokenExpiration)) // 만료 시간
+						.setIssuedAt(date) // 발급일
+						.signWith(key, signatureAlgorithm) // 암호화 알고리즘
+						.compact();
 
 		String refreshToken =
-			Jwts.builder()
-				.setSubject(username) // 사용자 식별자값(ID)
-				.claim(AUTHORIZATION_KEY, role) // 사용자 권한
-				.setExpiration(new Date(date.getTime() + refreshTokenExpiration)) // 만료 시간
-				.setIssuedAt(date) // 발급일
-				.signWith(key, signatureAlgorithm) // 암호화 알고리즘
-				.compact();
+				Jwts.builder()
+						.setSubject(username) // 사용자 식별자값(ID)
+						.claim(AUTHORIZATION_KEY, role) // 사용자 권한
+						.setExpiration(new Date(date.getTime() + refreshTokenExpiration)) // 만료 시간
+						.setIssuedAt(date) // 발급일
+						.signWith(key, signatureAlgorithm) // 암호화 알고리즘
+						.compact();
 
 		return TokenDto.of(accessToken, refreshToken);
 	}

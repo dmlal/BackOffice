@@ -38,5 +38,6 @@ public class Like extends BaseEntity {
 
     public void setPost(Post post) {
         this.post = post;
+        post.getLikes().add(this);
     }
 }
