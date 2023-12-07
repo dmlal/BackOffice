@@ -1,10 +1,13 @@
 package com.sparta.backoffice.global.config;
 
-import java.util.stream.Stream;
-
+import com.sparta.backoffice.global.security.CustomUserDetailService;
+import com.sparta.backoffice.global.security.JwtAuthorizationFilter;
+import com.sparta.backoffice.global.util.JwtProvider;
+import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -14,16 +17,12 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher;
 import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 
-import com.sparta.backoffice.global.security.CustomUserDetailService;
-import com.sparta.backoffice.global.security.JwtAuthorizationFilter;
-import com.sparta.backoffice.global.util.JwtProvider;
-import com.sparta.backoffice.global.util.RedisUtils;
-
-import lombok.RequiredArgsConstructor;
+import java.util.stream.Stream;
 
 @RequiredArgsConstructor
 @EnableWebSecurity
 @Configuration
+@EnableMethodSecurity(securedEnabled = true)
 public class SecurityConfig {
 	private final JwtProvider jwtProvider;
 	private final CustomUserDetailService userDetailService;

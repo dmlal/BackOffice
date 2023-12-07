@@ -9,6 +9,7 @@ import com.sparta.backoffice.user.constant.UserRoleEnum;
 import com.sparta.backoffice.user.dto.request.ProfileUpdateRequestDto;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -76,10 +77,10 @@ public class User extends BaseEntity {
         return this;
     }
 
-    public User(String username, String password) {
+    public User(String username, String password, UserRoleEnum role) {
         this.username = username;
         this.password = password;
-        this.role = UserRoleEnum.USER;
+        this.role = role;
     }
 
 
