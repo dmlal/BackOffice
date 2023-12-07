@@ -47,8 +47,17 @@ public class AuthService {
 		if (userRepository.existsByUsername(request.getUsername())) {
 			throw new ApiException(ErrorCode.ALREADY_EXIST_USERNAME);
 		}
+		// 사용자 ROLE 확인
+		UserRoleEnum role = UserRoleEnum.USER;
+		if (request.isAdmin()) {
+			if (!jwtProvider.getAdminKey().equals(request.getAdminToken())) {
+				throw new ApiException(NOT_EQUALS_ADMIN_TOKEN_ERROR);
+			}
+			role = UserRoleEnum.ADMIN;
+		}
 
-		userRepository.save(request.toEntity(passwordEncoder));
+		// 사용자 등록
+		userRepository.save(request.toEntity(passwordEncoder, role));
 	}
 
 	@Transactional
