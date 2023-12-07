@@ -1,8 +1,6 @@
 package com.sparta.backoffice.post.controller;
 
-import com.sparta.backoffice.global.constant.ResponseCode;
 import com.sparta.backoffice.global.dto.BaseResponse;
-import com.sparta.backoffice.like.dto.LikeUserResponseDto;
 import com.sparta.backoffice.post.dto.PostResponseDto;
 import com.sparta.backoffice.post.service.PostService;
 import lombok.RequiredArgsConstructor;
