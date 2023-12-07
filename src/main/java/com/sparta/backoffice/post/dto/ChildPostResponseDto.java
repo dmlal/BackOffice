@@ -5,9 +5,11 @@ import com.sparta.backoffice.user.dto.UserSimpleDto;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
-public class PostResponseDto {
+public class ChildPostResponseDto {
     Long id;
     String content;
     LocalDateTime createdAt;
@@ -18,8 +20,9 @@ public class PostResponseDto {
     Integer likesCount;
     Boolean isDeleted;
     Boolean isPrivate;
+    List<ChildPostResponseDto> childs;
 
-    public PostResponseDto(Post post) {
+    public ChildPostResponseDto(Post post) {
         this.id = post.getId();
         this.content = post.getContent();
         this.createdAt = post.getCreatedAt();
@@ -28,8 +31,9 @@ public class PostResponseDto {
         if (post.getParentPost() != null)
             this.parentPostId = post.getParentPost().getId();
         this.userSimpleDto = new UserSimpleDto(post.getUser());
-        this.isDeleted = post.isDeleted();
         this.likesCount = post.getLikes().size();
+        this.isDeleted = post.isDeleted();
+        this.childs = post.getChildPosts().stream().map(ChildPostResponseDto::new).toList();
         this.isPrivate = post.getUser().getIsPrivate();
     }
 }

@@ -1,6 +1,7 @@
 package com.sparta.backoffice.post.entity;
 
 import com.sparta.backoffice.global.entity.BaseEntity;
+import com.sparta.backoffice.like.entity.Like;
 import com.sparta.backoffice.post.dto.PostRequestDto;
 import com.sparta.backoffice.user.entity.User;
 import jakarta.persistence.*;
@@ -35,6 +36,12 @@ public class Post extends BaseEntity {
     @JoinColumn(name = "user_id")
     private User user;
 
+    @Column
+    private boolean isDeleted = false;
+
+    @OneToMany(mappedBy = "post")
+    private List<Like> likes = new ArrayList<>();
+
     public Post(PostRequestDto requestDto, Post parentPost, User user) {
         this.content = requestDto.getContent();
         this.parentPost = parentPost;
@@ -50,10 +57,8 @@ public class Post extends BaseEntity {
         this.content = requestDto.getContent();
     }
 
-    public void removeChilds() {
-        for (Post child : childPosts) {
-            child.parentPost = null;
-        }
-        childPosts.clear();
+    public void changeStateIsDeleted() {
+        this.content = "이 게시물은 작성자에 의해 삭제되었습니다.";
+        this.isDeleted = true;
     }
 }

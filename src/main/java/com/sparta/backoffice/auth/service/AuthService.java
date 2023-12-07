@@ -54,12 +54,12 @@ public class AuthService {
 
     public User findUser(LoginRequest request) {
         return userRepository.findByUsername(request.getUsername())
-                .orElseThrow(() -> new ApiException(NOT_FOUND_USER));
+                .orElseThrow(() -> new ApiException(NOT_FOUND_USER_ERROR));
     }
 
     private void checkPassword(String rawPassword, String encodedPassword) {
         if (!passwordEncoder.matches(rawPassword, encodedPassword)) {
-            throw new ApiException(NOT_FOUND_USER);
+            throw new ApiException(NOT_FOUND_USER_ERROR);
         }
     }
 

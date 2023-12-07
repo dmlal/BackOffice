@@ -6,12 +6,16 @@ import lombok.Getter;
 @Getter
 public class UserSimpleDto {
     private Long id;
+    private String nickname;
     private String username;
     private String profileImageUrl;
+    private Boolean isPrivate;
 
     public UserSimpleDto(User user) {
         this.id = user.getId();
+        this.nickname = user.getNickname();
         this.username = user.getUsername();
         this.profileImageUrl = user.getProfileImageUrl();
+        this.isPrivate = user.getIsPrivate();
     }
 }

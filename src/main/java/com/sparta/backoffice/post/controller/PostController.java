@@ -2,6 +2,7 @@ package com.sparta.backoffice.post.controller;
 
 import com.sparta.backoffice.global.annotation.AuthUser;
 import com.sparta.backoffice.global.dto.BaseResponse;
+import com.sparta.backoffice.post.dto.PostDetailsResponseDto;
 import com.sparta.backoffice.post.dto.PostRequestDto;
 import com.sparta.backoffice.post.dto.PostResponseDto;
 import com.sparta.backoffice.post.service.PostService;
@@ -40,5 +41,13 @@ public class PostController {
         postService.deletePost(postId, user);
         return ResponseEntity.status(HttpStatus.OK).body(
                 BaseResponse.of(DELETED_POST, null));
+    }
+
+    //내가 팔로잉한 사람이 아니라면 볼 수 없게 처리해야한다.
+    @GetMapping("/{postId}")
+    public ResponseEntity<BaseResponse<PostDetailsResponseDto>> getPost(@PathVariable Long postId) {
+        PostDetailsResponseDto responseDto = postService.getPost(postId);
+        return ResponseEntity.status(HttpStatus.OK).body(
+                BaseResponse.of(GET_POST_DETAIL, responseDto));
     }
 }
