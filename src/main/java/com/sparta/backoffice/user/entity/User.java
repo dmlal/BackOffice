@@ -30,13 +30,13 @@ public class User extends BaseEntity {
     @Column(nullable = false)
     private String password;
 
-    @Column(nullable = false, unique = true)
+    @Column(unique = true)
     private String nickname;
 
-    @Column(nullable = false, name = "introduction")
+    @Column(name = "introduction")
     private String intro;
 
-    @Column(nullable = false, name = "profile_link")
+    @Column(name = "profile_link")
     private String link;
 
     @Column(name = "profile_image")
@@ -59,7 +59,12 @@ public class User extends BaseEntity {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<PasswordHistory> passwordHistories = new ArrayList<>();
 
-    // a
+//    @OneToMany(mappedBy = "user")  // 팔로잉을 찾으면 follower를 불러온다
+//    private List<Follow> follwerList = new ArrayList<>();
+//
+//    @OneToMany(mappedBy = "followUser")   // following
+//    private List<Follow> follwingList = new ArrayList<>();
+
 
     public User updateProfile(ProfileUpdateRequestDto requestDto) {
         this.nickname = requestDto.getNickname();
@@ -76,10 +81,10 @@ public class User extends BaseEntity {
         return this;
     }
 
-    public User(String username, String password) {
+    public User(String username, String password, UserRoleEnum role) {
         this.username = username;
         this.password = password;
-        this.role = UserRoleEnum.USER;
+        this.role = role;
     }
 
 

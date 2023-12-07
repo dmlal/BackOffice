@@ -1,18 +1,19 @@
 package com.sparta.backoffice.global.util;
 
 import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import com.sparta.backoffice.auth.dto.TokenDto;
 import com.sparta.backoffice.global.properties.JwtProperties;
 import com.sparta.backoffice.user.constant.UserRoleEnum;
+import com.sparta.backoffice.user.entity.User;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -26,10 +27,9 @@ import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-@Getter
+
 @Slf4j(topic = "Jwt 유틸")
 @RequiredArgsConstructor
 @Component
@@ -42,12 +42,14 @@ public class JwtProvider {
 	private final SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
 	private final JwtProperties jwtProperties;
 	private String secretKey;
+	private String adminKey;
 	private Long accessTokenExpiration;
 	private Long refreshTokenExpiration;
 	private Key key;
 
 	@PostConstruct
 	public void init() {
+		adminKey = jwtProperties.getAdminKey();
 		secretKey = jwtProperties.getSecretKey();
 		accessTokenExpiration = jwtProperties.getAccessTokenExpiration();
 		refreshTokenExpiration = jwtProperties.getRefreshTokenExpiration();
@@ -63,10 +65,10 @@ public class JwtProvider {
 			return null;
 		}
 
-		return substringToken(tokenValue);
+		return subStringToken(tokenValue);
 	}
 
-	private String substringToken(String tokenValue) {
+	private String subStringToken(String tokenValue) {
 		if (StringUtils.hasText(tokenValue) && tokenValue.startsWith(BEARER_PREFIX)) {
 			return tokenValue.substring(7);
 		}
@@ -94,33 +96,35 @@ public class JwtProvider {
 	// 토큰에서 사용자 정보 Claim 가져오기
 	public Claims getUserInfoFromToken(String token) {
 		return Jwts.parserBuilder()
-			.setSigningKey(key)
-			.build()
-			.parseClaimsJws(token)
-			.getBody();
+				.setSigningKey(key)
+				.build()
+				.parseClaimsJws(token)
+				.getBody();
 	}
 
 	//토큰 생성
-	public TokenDto createToken(String username, UserRoleEnum role) {
+	public TokenDto createToken(User user) {
 		Date date = new Date();
+		String username = user.getUsername();
+		UserRoleEnum role = user.getRole();
 
 		String accessToken =
-			Jwts.builder()
-				.setSubject(username) // 사용자 식별자값(ID)
-				.claim(AUTHORIZATION_KEY, role) // 사용자 권한
-				.setExpiration(new Date(date.getTime() + accessTokenExpiration)) // 만료 시간
-				.setIssuedAt(date) // 발급일
-				.signWith(key, signatureAlgorithm) // 암호화 알고리즘
-				.compact();
+				Jwts.builder()
+						.setSubject(username) // 사용자 식별자값(ID)
+						.claim(AUTHORIZATION_KEY, role) // 사용자 권한
+						.setExpiration(new Date(date.getTime() + accessTokenExpiration)) // 만료 시간
+						.setIssuedAt(date) // 발급일
+						.signWith(key, signatureAlgorithm) // 암호화 알고리즘
+						.compact();
 
 		String refreshToken =
-			Jwts.builder()
-				.setSubject(username) // 사용자 식별자값(ID)
-				.claim(AUTHORIZATION_KEY, role) // 사용자 권한
-				.setExpiration(new Date(date.getTime() + refreshTokenExpiration)) // 만료 시간
-				.setIssuedAt(date) // 발급일
-				.signWith(key, signatureAlgorithm) // 암호화 알고리즘
-				.compact();
+				Jwts.builder()
+						.setSubject(username) // 사용자 식별자값(ID)
+						.claim(AUTHORIZATION_KEY, role) // 사용자 권한
+						.setExpiration(new Date(date.getTime() + refreshTokenExpiration)) // 만료 시간
+						.setIssuedAt(date) // 발급일
+						.signWith(key, signatureAlgorithm) // 암호화 알고리즘
+						.compact();
 
 		return TokenDto.of(accessToken, refreshToken);
 	}
@@ -150,23 +154,7 @@ public class JwtProvider {
 		response.setHeader(AUTHORIZATION_HEADER, BEARER_PREFIX + accessToken);
 	}
 
-	public String getRefreshTokenFromCookie(HttpServletRequest request) {
-		Cookie[] cookies = request.getCookies();
-
-		if (cookies == null) {
-			return null;
-		}
-
-		String token = "";
-		for (Cookie cookie : cookies) {
-			if (cookie.getName().equals(REFRESH_TOKEN_HEADER)) {
-				try {
-					token = URLDecoder.decode(cookie.getValue(), "UTF-8"); // Encode 되어 넘어간 Value 다시 Decode
-				} catch (UnsupportedEncodingException e) {
-					break;
-				}
-			}
-		}
-		return substringToken(token);
+	public String getAdminKey() {
+		return adminKey;
 	}
 }

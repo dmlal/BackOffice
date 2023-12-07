@@ -2,8 +2,7 @@ package com.sparta.backoffice.auth.service;
 
 import static com.sparta.backoffice.global.constant.ErrorCode.*;
 
-import java.util.Optional;
-
+import com.sparta.backoffice.user.constant.UserRoleEnum;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
@@ -15,124 +14,76 @@ import org.springframework.transaction.annotation.Transactional;
 import com.sparta.backoffice.auth.dto.TokenDto;
 import com.sparta.backoffice.auth.dto.request.LoginRequest;
 import com.sparta.backoffice.auth.dto.request.SignupRequest;
-import com.sparta.backoffice.auth.entity.Logout;
-import com.sparta.backoffice.auth.entity.RefreshToken;
-import com.sparta.backoffice.auth.repository.LogoutRepository;
-import com.sparta.backoffice.auth.repository.RefreshTokenRepository;
 import com.sparta.backoffice.global.constant.ErrorCode;
 import com.sparta.backoffice.global.exception.ApiException;
 import com.sparta.backoffice.global.security.CustomUserDetails;
 import com.sparta.backoffice.global.util.JwtProvider;
-import com.sparta.backoffice.user.constant.UserRoleEnum;
 import com.sparta.backoffice.user.entity.User;
 import com.sparta.backoffice.user.repository.UserRepository;
 
-import io.jsonwebtoken.Claims;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
 public class AuthService {
-	private final UserRepository userRepository;
-	private final PasswordEncoder passwordEncoder;
-	private final JwtProvider jwtProvider;
-	private final RefreshTokenRepository refreshTokenRepository;
-	private final LogoutRepository logoutRepository;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtProvider jwtProvider;
 
-	@Transactional
-	public void signup(SignupRequest request) {
+    @Transactional
+    public void signup(SignupRequest request) {
 
-		if (userRepository.existsByUsername(request.getUsername())) {
-			throw new ApiException(ErrorCode.ALREADY_EXIST_USERNAME);
-		}
+        if (userRepository.existsByUsername(request.getUsername())) {
+            throw new ApiException(ErrorCode.ALREADY_EXIST_USERNAME);
+        }
+        // 사용자 ROLE 확인
+        UserRoleEnum role = UserRoleEnum.USER;
+        if (request.isAdmin()) {
+            if (!jwtProvider.getAdminKey().equals(request.getAdminToken())) {
+                throw new ApiException(NOT_EQUALS_ADMIN_TOKEN_ERROR);
+            }
+            role = UserRoleEnum.ADMIN;
+        }
 
-		userRepository.save(request.toEntity(passwordEncoder));
-	}
+        // 사용자 등록
+        userRepository.save(request.toEntity(passwordEncoder, role));
+    }
 
-	@Transactional
-	public void login(LoginRequest request, HttpServletResponse response) {
-		User user = findUser(request);
+    public void login(LoginRequest request, HttpServletResponse response) {
+        User user = findUser(request);
 
-		Authentication authentication = createAuthentication(request.getPassword(), user);
-		setAuthentication(authentication);
+        Authentication authentication = createAuthentication(request.getPassword(), user);
+        setAuthentication(authentication);
 
-		//Response 세팅
-		TokenDto tokenDto = jwtProvider.createToken(user.getUsername(), user.getRole());
-		jwtProvider.setTokenResponse(tokenDto, response);
+        //Response 세팅
+        TokenDto tokenDto = jwtProvider.createToken(user);
+        jwtProvider.setTokenResponse(tokenDto, response);
+    }
 
-		//Redis Refresh 토큰 저장
-		refreshTokenRepository.save(RefreshToken.of(user.getUsername(), tokenDto.getRefreshToken()));
-	}
 
-	@Transactional
-	public void reissue(HttpServletRequest request, HttpServletResponse response) {
-		String targetToken = jwtProvider.getRefreshTokenFromCookie(request);
+    public User findUser(LoginRequest request) {
+        return userRepository.findByUsername(request.getUsername())
+                .orElseThrow(() -> new ApiException(NOT_FOUND_USER_ERROR));
+    }
 
-		//토큰 검증
-		if (!jwtProvider.validateToken(targetToken)) {
-			throw new ApiException(INVALID_TOKEN);
-		}
+    private void checkPassword(String rawPassword, String encodedPassword) {
+        if (!passwordEncoder.matches(rawPassword, encodedPassword)) {
+            throw new ApiException(NOT_FOUND_USER_ERROR);
+        }
+    }
 
-		//토큰에서 username 추출
-		Claims claims = jwtProvider.getUserInfoFromToken(targetToken);
-		String username = claims.getSubject();
-		UserRoleEnum role = UserRoleEnum.valueOf((String) claims.get("auth"));
+    // 인증 객체 생성
+    private Authentication createAuthentication(String rawPassword, User user) {
+        checkPassword(rawPassword, user.getPassword());
 
-		//db에서 refresh token 확인
-		Optional<RefreshToken> refreshTokenOptional = refreshTokenRepository.findById(username);
+        CustomUserDetails userDetails = new CustomUserDetails(user);
+        return new UsernamePasswordAuthenticationToken(userDetails, user.getPassword(), userDetails.getAuthorities());
+    }
 
-		//refresh token 일치하는지 검증
-		if (refreshTokenOptional.isEmpty()) {
-			throw new ApiException(INVALID_TOKEN);
-		}
 
-		//토큰 재발급
-		TokenDto tokenDto = jwtProvider.createToken(username, role);
-		jwtProvider.setTokenResponse(tokenDto, response);
-
-		//재발급된 토큰 정보 저장
-		refreshTokenRepository.save(RefreshToken.of(username, tokenDto.getRefreshToken()));
-	}
-
-	//내부 사용
-	public User findUser(LoginRequest request) {
-		return userRepository.findByUsername(request.getUsername())
-			.orElseThrow(() -> new ApiException(NOT_FOUND_USER));
-	}
-
-	private void checkPassword(String rawPassword, String encodedPassword) {
-		if (!passwordEncoder.matches(rawPassword, encodedPassword)) {
-			throw new ApiException(NOT_FOUND_USER);
-		}
-	}
-
-	// 인증 객체 생성
-	private Authentication createAuthentication(String rawPassword, User user) {
-		checkPassword(rawPassword, user.getPassword());
-
-		CustomUserDetails userDetails = new CustomUserDetails(user);
-		return new UsernamePasswordAuthenticationToken(userDetails, user.getPassword(), userDetails.getAuthorities());
-	}
-
-	private void setAuthentication(Authentication authentication) {
-		SecurityContext context = SecurityContextHolder.getContext();
-		context.setAuthentication(authentication);
-	}
-
-	@Transactional
-	public void logout(HttpServletRequest request) {
-		String accessToken = jwtProvider.getTokenFromRequestHeader(request);
-
-		jwtProvider.validateToken(accessToken);
-
-		//토큰에서 username, expiration 추출
-		Claims claims = jwtProvider.getUserInfoFromToken(accessToken);
-		String username = claims.getSubject();
-
-		//로그아웃 처리
-		refreshTokenRepository.deleteById(username);
-		logoutRepository.save(Logout.of(accessToken, username));
-	}
+    private void setAuthentication(Authentication authentication) {
+        SecurityContext context = SecurityContextHolder.getContext();
+        context.setAuthentication(authentication);
+    }
 }
