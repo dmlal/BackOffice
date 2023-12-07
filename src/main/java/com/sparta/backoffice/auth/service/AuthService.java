@@ -30,7 +30,6 @@ public class AuthService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtProvider jwtProvider;
-    private final String ADMIN_TOKEN = "AAABnvxRVklrnYxKZ0aHgTBcXukeZygoC";
 
     @Transactional
     public void signup(SignupRequest request) {
@@ -41,14 +40,14 @@ public class AuthService {
         // 사용자 ROLE 확인
         UserRoleEnum role = UserRoleEnum.USER;
         if (request.isAdmin()) {
-            if (!ADMIN_TOKEN.equals(request.getAdminToken())) {
+            if (!jwtProvider.getAdminKey().equals(request.getAdminToken())) {
                 throw new ApiException(NOT_EQUALS_ADMIN_TOKEN_ERROR);
             }
             role = UserRoleEnum.ADMIN;
         }
 
         // 사용자 등록
-        userRepository.save(request.toEntity(passwordEncoder,role));
+        userRepository.save(request.toEntity(passwordEncoder, role));
     }
 
     public void login(LoginRequest request, HttpServletResponse response) {
