@@ -5,22 +5,29 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Getter
+@Setter
 @NoArgsConstructor
 public class Follow {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "follower_id")
+    @Column(name = "id") // follower_id
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name ="user_Id")
-    private User user;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name ="follower_id") // user_id
+    private User follower;
 
-    @ManyToOne
-    @JoinColumn(name = "following_id")
-    private User followingId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "following_id") // following_id
+    private User following;
+
+    public Follow(User authUser, User toFolloewUser) {
+        this.follower = authUser;
+        this.following = toFolloewUser;
+    }
 }

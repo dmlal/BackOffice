@@ -12,6 +12,8 @@ public enum ResponseCode {
     GET_LIKE_USERS(200, "게시글 좋아요한 유저 목록 조회 성공"),
     GET_USER_POSTS(200, "번 유저의 게시글 목록 조회 성공"),
     GET_POST_DETAIL(200, "게시글 상세 조회 성공"),
+    FOLLOW_USER(200, "유저 팔로우 성공"),
+    UNFOLLOW_USER(200, "유저 언팔로우 성공"),
 
     /* 201 CREATED : Resource 생성 완료 */
     SIGNUP(201, "회원가입 성공"),
@@ -22,6 +24,7 @@ public enum ResponseCode {
     UPDATE_PASSWORD(200, "비밀번호 변경 성공"),
     MODIFIED_POST(200, "게시글 수정 성공"),
     CREATED_LIKE(201, "좋아요 성공"),
+    GET_FOLLOW_LIST(201, "팔로우 목록 보기"),
 
     /* 204 NO-CONTENT: Resource 없음 */
     DELETED_LIKE(204, "좋아요 취소 성공");

@@ -60,10 +60,10 @@ public class User extends BaseEntity {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<PasswordHistory> passwordHistories = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user")  // 팔로잉을 찾으면 follower를 불러온다
-    private List<Follow> follwerList = new ArrayList<>();
+    @OneToMany(mappedBy = "following")  // 팔로잉을 찾으면 follower를 불러온다
+    private List<Follow> followerList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "followUser")   // following
+    @OneToMany(mappedBy = "follower")   // following
     private List<Follow> follwingList = new ArrayList<>();
 
 

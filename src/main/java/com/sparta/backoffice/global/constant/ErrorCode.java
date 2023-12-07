@@ -15,6 +15,10 @@ public enum ErrorCode {
     SELF_LIKE_ERROR(400, "자신의 게시글은 좋아요 할 수 없습니다."),
     CAN_NOT_CHANGE_NICKNAME(400, "닉네임을 변경할 수 없습니다."),
     RECENTLY_USED_PASSWORD(400, "최근 사용한 비밀번호입니다."),
+    CAN_NOT_FOLLOW_YOURSELF(400, "자기자신은 팔로우할 수 없습니다."),
+    CAN_NOT_UNFOLLOW_YOURSELF(400, "자기자신은 언팔로우할 수 없습니다."),
+    ALREADY_FOLLOW_USER(400, "이미 팔로우한 사용자입니다."),
+    ALREADY_UNFOLLOW_USER(400, "이미 언팔로우한 사용자입니다."),
 
     /* 403 FORBIDDEN  :  권한 없음 */
     DENIED_AUTHORITY(403,"권한이 없습니다."),

@@ -6,12 +6,16 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
-@RequiredArgsConstructor
 public class FollowResponseDto {
 
-    private Long followerId;
-    private Long followingId;
+    private List<String> follower;
+    private List<String> following;
 
+    public FollowResponseDto(List<String> follower) {
+        this.follower = follower;
+    }
 }
