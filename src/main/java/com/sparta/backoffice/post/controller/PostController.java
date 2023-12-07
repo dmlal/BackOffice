@@ -1,6 +1,7 @@
 package com.sparta.backoffice.post.controller;
 
 import com.sparta.backoffice.global.annotation.AuthUser;
+import com.sparta.backoffice.global.constant.ResponseCode;
 import com.sparta.backoffice.global.dto.BaseResponse;
 import com.sparta.backoffice.post.dto.PostDetailsResponseDto;
 import com.sparta.backoffice.post.dto.PostRequestDto;
@@ -14,6 +15,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 import static com.sparta.backoffice.global.constant.ResponseCode.*;
 
@@ -54,5 +57,29 @@ public class PostController {
         PostDetailsResponseDto responseDto = postService.getPost(postId);
         return ResponseEntity.status(HttpStatus.OK).body(
                 BaseResponse.of(GET_POST_DETAIL, responseDto));
+    }
+
+    @GetMapping("/users/{userId}/likes/posts")
+    public ResponseEntity<BaseResponse<List<PostResponseDto>>> getUserLikedPosts(
+            @PathVariable Long userId,
+            @RequestParam Integer cursor,
+            @RequestParam Integer size,
+            @RequestParam String dir
+    ) {
+        List<PostResponseDto> userLikedPosts = postService.getUserLikedPosts(userId, cursor, size, dir);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(BaseResponse.of(GET_LIKE_POSTS, userLikedPosts));
+    }
+
+    @GetMapping("/follows/posts")
+    public ResponseEntity<BaseResponse<List<PostResponseDto>>> getFollowingPosts(
+            @RequestParam Integer cursor,
+            @RequestParam Integer size,
+            @RequestParam String dir,
+            @AuthUser User user
+    ) {
+        List<PostResponseDto> followingPosts = postService.getFollowingPosts(cursor, size, dir, user);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(BaseResponse.of(GET_FOLLOWING_POSTS, followingPosts));
     }
 }

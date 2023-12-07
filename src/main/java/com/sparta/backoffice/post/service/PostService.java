@@ -1,7 +1,10 @@
 package com.sparta.backoffice.post.service;
 
+import com.sparta.backoffice.global.constant.ErrorCode;
 import com.sparta.backoffice.global.exception.ApiException;
 import com.sparta.backoffice.post.dto.PostDetailsResponseDto;
+import com.sparta.backoffice.like.dto.LikeUserResponseDto;
+import com.sparta.backoffice.like.entity.Like;
 import com.sparta.backoffice.post.dto.PostRequestDto;
 import com.sparta.backoffice.post.dto.PostResponseDto;
 import com.sparta.backoffice.post.entity.Post;
@@ -15,8 +18,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -142,5 +151,43 @@ public class PostService {
                 () -> new ApiException(NOT_FOUND_POST_ERROR));
 
         return new PostDetailsResponseDto(post);
+    }
+
+    @Transactional(readOnly = true)
+    public List<PostResponseDto> getUserLikedPosts(
+            Long userId,
+            Integer cursor,
+            Integer size,
+            String direction
+    ) {
+        if (!userRepository.existsById(userId)) {
+            throw new ApiException(NOT_FOUND_USER_ERROR);
+        }
+
+        Sort sort = Sort.by(direction.equalsIgnoreCase("desc") ?
+                Sort.Direction.DESC : Sort.Direction.ASC, "createdAt");
+
+        Pageable pageable = PageRequest.of(cursor, size, sort);
+        Page<Post> posts = postRepository.findPostsByLikesUserId(userId, pageable);
+
+        return posts.stream()
+                .map(PostResponseDto::new).toList();
+    }
+
+    @Transactional(readOnly = true)
+    public List<PostResponseDto> getFollowingPosts(
+            Integer cursor,
+            Integer size,
+            String direction,
+            User user
+    ) {
+        Sort sort = Sort.by(direction.equalsIgnoreCase("desc") ?
+                Sort.Direction.DESC : Sort.Direction.ASC, "createdAt");
+
+        Pageable pageable = PageRequest.of(cursor, size, sort);
+        Page<Post> posts = postRepository.findPostsByFollowingUsers(user.getId(), pageable);
+
+        return posts.stream()
+                .map(PostResponseDto::new).toList();
     }
 }
