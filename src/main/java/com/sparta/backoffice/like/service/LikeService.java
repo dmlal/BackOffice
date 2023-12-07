@@ -2,9 +2,8 @@ package com.sparta.backoffice.like.service;
 
 import com.sparta.backoffice.global.constant.ErrorCode;
 import com.sparta.backoffice.global.exception.ApiException;
-import com.sparta.backoffice.like.dto.LikeUserResponseDto;
-import com.sparta.backoffice.like.repository.LikeRepository;
 import com.sparta.backoffice.like.entity.Like;
+import com.sparta.backoffice.like.repository.LikeRepository;
 import com.sparta.backoffice.post.entity.Post;
 import com.sparta.backoffice.post.repository.PostRepository;
 import com.sparta.backoffice.user.dto.UserSimpleDto;
@@ -18,7 +17,6 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -34,7 +32,7 @@ public class LikeService {
         Post post = postRepository.findByIdAndIsDeletedFalse(postId)
                 .orElseThrow(() -> new ApiException(ErrorCode.NOT_FOUND_POST_ERROR));
         // 자기 글에 좋아요 못함
-        if (Objects.equals(post.getUser().getId(), user.getId())) {
+        if (post.getUser() != null && Objects.equals(post.getUser().getId(), user.getId())) {
             throw new ApiException(ErrorCode.SELF_LIKE_ERROR);
         }
         // 이미 좋아요 했으면 좋아요 못함

@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static com.sparta.backoffice.global.constant.ResponseCode.UPDATE_PASSWORD;
 import static com.sparta.backoffice.global.constant.ResponseCode.UPDATE_PROFILE;
 
 
@@ -57,6 +56,14 @@ public class AdminUserConroller {
     }
 
     //유저 회원 탈퇴
+    @DeleteMapping("/{userId}")
+    public ResponseEntity<BaseResponse<String>> deleteUser(@PathVariable Long userId, @AuthUser User user) {
+        userService.deleteUser(userId, user);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(BaseResponse.of(ResponseCode.DELETED_USER,""));
+    }
+
     //유저 권한 변경
     //유저 차단
 }

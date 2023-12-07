@@ -28,12 +28,13 @@ public class ChildPostResponseDto {
         this.createdAt = post.getCreatedAt();
         this.modifiedAt = post.getModifiedAt();
         this.replyCount = post.getChildPosts().size();
-        if (post.getParentPost() != null)
+        if (post.getParentPost() != null) {
             this.parentPostId = post.getParentPost().getId();
-        this.userSimpleDto = new UserSimpleDto(post.getUser());
+            this.userSimpleDto = new UserSimpleDto(post.getUser());
+            this.isPrivate = post.getUser().getIsPrivate();
+        }
         this.likesCount = post.getLikes().size();
         this.isDeleted = post.isDeleted();
         this.childs = post.getChildPosts().stream().map(ChildPostResponseDto::new).toList();
-        this.isPrivate = post.getUser().getIsPrivate();
     }
 }

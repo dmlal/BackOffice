@@ -25,7 +25,8 @@ public enum ResponseCode {
     CREATED_LIKE(201, "좋아요 성공"),
 
     /* 204 NO-CONTENT: Resource 없음 */
-    DELETED_LIKE(204, "좋아요 취소 성공");
+    DELETED_LIKE(204, "좋아요 취소 성공"),
+    DELETED_USER(204, "회원 삭제 성공");
 
 
     private final int httpStatus;

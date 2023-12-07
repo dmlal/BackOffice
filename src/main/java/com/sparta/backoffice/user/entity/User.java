@@ -53,6 +53,10 @@ public class User extends BaseEntity {
 
     @OneToMany(mappedBy = "user")
     private List<Post> postList;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
+    private List<Like> likes = new ArrayList<>();
+
     @Enumerated(EnumType.STRING)
     private UserRoleEnum role;
 
@@ -86,12 +90,6 @@ public class User extends BaseEntity {
         this.password = password;
         this.role = role;
     }
-
-
-    // 좋아요와 1대다
-    @OneToMany(mappedBy = "user")
-    private List<Like> likes;
-
 
     // 팔로우와 다대 1
 
