@@ -3,7 +3,6 @@ package com.sparta.backoffice.user.service;
 import com.sparta.backoffice.global.exception.ApiException;
 import com.sparta.backoffice.user.dto.request.PasswordUpdateRequestDto;
 import com.sparta.backoffice.user.dto.request.ProfileUpdateRequestDto;
-import com.sparta.backoffice.user.dto.response.PasswordUpdateResponseDto;
 import com.sparta.backoffice.user.dto.response.ProfileUpdateResponseDto;
 import com.sparta.backoffice.user.entity.PasswordHistory;
 import com.sparta.backoffice.user.entity.User;
@@ -49,7 +48,7 @@ public class UserService {
     }
 
     @Transactional
-    public PasswordUpdateResponseDto updatePassword(Long userId, PasswordUpdateRequestDto requestDto, User authUser) {
+    public void updatePassword(Long userId, PasswordUpdateRequestDto requestDto, User authUser) {
         User user = foundUser(userId);
 
         checkUserPermission(user, authUser);
@@ -70,9 +69,6 @@ public class UserService {
 
         PasswordHistory updatedPasswordHistory = new PasswordHistory(user, encodedNewPassword);
         passwordHistoryRepository.save(updatedPasswordHistory);
-
-
-        return new PasswordUpdateResponseDto(user);
     }
 
     private User foundUser(Long userId) {
