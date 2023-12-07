@@ -6,6 +6,7 @@ import com.sparta.backoffice.post.dto.PostRequestDto;
 import com.sparta.backoffice.post.dto.PostResponseDto;
 import com.sparta.backoffice.post.entity.Post;
 import com.sparta.backoffice.post.repository.PostRepository;
+import com.sparta.backoffice.user.constant.UserRoleEnum;
 import com.sparta.backoffice.user.entity.User;
 import com.sparta.backoffice.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -54,8 +55,7 @@ public class PostService {
         Post post = postRepository.findByIdAndIsDeletedFalse(postId).orElseThrow(
                 () -> new ApiException(NOT_FOUND_POST_ERROR));
 
-
-        if (!post.getUser().getId().equals(user.getId())) {
+        if (user.getRole() != UserRoleEnum.ADMIN && !post.getUser().getId().equals(user.getId())) {
             throw new ApiException(CAN_NOT_MODIFY_ERROR);
         }
 
@@ -73,8 +73,7 @@ public class PostService {
         Post post = postRepository.findByIdAndIsDeletedFalse(postId).orElseThrow(
                 () -> new ApiException(NOT_FOUND_POST_ERROR));
 
-
-        if (!post.getUser().getId().equals(user.getId())) {
+        if (user.getRole() != UserRoleEnum.ADMIN && !post.getUser().getId().equals(user.getId())) {
             throw new ApiException(CAN_NOT_DELETE_ERROR);
         }
 

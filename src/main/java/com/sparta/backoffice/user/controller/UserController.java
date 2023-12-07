@@ -7,17 +7,13 @@ import com.sparta.backoffice.user.dto.request.ProfileUpdateRequestDto;
 import com.sparta.backoffice.user.dto.request.UserDetailsRequestDto;
 import com.sparta.backoffice.user.dto.response.PasswordUpdateResponseDto;
 import com.sparta.backoffice.user.dto.response.ProfileUpdateResponseDto;
-import com.sparta.backoffice.user.entity.User;
 import com.sparta.backoffice.user.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
-
-import java.nio.file.AccessDeniedException;
 
 @RestController
 @RequestMapping("/api/users")
@@ -25,8 +21,6 @@ public class UserController {
 
     @Autowired
     private UserService userService;
-
-
 
     @PutMapping("/{userId}")
     public ResponseEntity<BaseResponse<ProfileUpdateResponseDto>> updateProfile(@PathVariable Long userId,

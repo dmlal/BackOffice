@@ -25,7 +25,7 @@ public class Post extends BaseEntity {
     @Column(nullable = false)
     private String content;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_post_id")
     private Post parentPost;
 
@@ -39,7 +39,7 @@ public class Post extends BaseEntity {
     @Column
     private boolean isDeleted = false;
 
-    @OneToMany(mappedBy = "post")
+    @OneToMany(mappedBy = "post",cascade = CascadeType.REMOVE)
     private List<Like> likes = new ArrayList<>();
 
     public Post(PostRequestDto requestDto, Post parentPost, User user) {
