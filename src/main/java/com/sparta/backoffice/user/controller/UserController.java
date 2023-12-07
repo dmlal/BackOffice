@@ -5,7 +5,6 @@ import com.sparta.backoffice.global.dto.BaseResponse;
 import com.sparta.backoffice.user.dto.request.PasswordUpdateRequestDto;
 import com.sparta.backoffice.user.dto.request.ProfileUpdateRequestDto;
 import com.sparta.backoffice.user.dto.response.ProfileUpdateResponseDto;
-import com.sparta.backoffice.user.entity.User;
 import com.sparta.backoffice.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -20,12 +19,17 @@ import org.springframework.web.bind.annotation.*;
 
 import static com.sparta.backoffice.global.constant.ResponseCode.UPDATE_PASSWORD;
 
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
+
+
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
 
     @Autowired
     private UserService userService;
+
 
 
 @Operation(summary = "프로필 수정", description = "프로필 수정 API")
@@ -51,6 +55,7 @@ public class UserController {
                 content = @Content(schema = @Schema(implementation = BaseResponse.class))
         )
 })
+
     @PutMapping("/{userId}")
     public ResponseEntity<BaseResponse<ProfileUpdateResponseDto>> updateProfile(@PathVariable Long userId,
                                                                                 @RequestBody ProfileUpdateRequestDto requestDto,

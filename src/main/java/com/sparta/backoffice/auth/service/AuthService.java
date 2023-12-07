@@ -2,6 +2,7 @@ package com.sparta.backoffice.auth.service;
 
 import static com.sparta.backoffice.global.constant.ErrorCode.*;
 
+import com.sparta.backoffice.user.constant.UserRoleEnum;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
@@ -36,8 +37,17 @@ public class AuthService {
         if (userRepository.existsByUsername(request.getUsername())) {
             throw new ApiException(ErrorCode.ALREADY_EXIST_USERNAME);
         }
+        // 사용자 ROLE 확인
+        UserRoleEnum role = UserRoleEnum.USER;
+        if (request.isAdmin()) {
+            if (!jwtProvider.getAdminKey().equals(request.getAdminToken())) {
+                throw new ApiException(NOT_EQUALS_ADMIN_TOKEN_ERROR);
+            }
+            role = UserRoleEnum.ADMIN;
+        }
 
-        userRepository.save(request.toEntity(passwordEncoder));
+        // 사용자 등록
+        userRepository.save(request.toEntity(passwordEncoder, role));
     }
 
     public void login(LoginRequest request, HttpServletResponse response) {
@@ -54,12 +64,12 @@ public class AuthService {
 
     public User findUser(LoginRequest request) {
         return userRepository.findByUsername(request.getUsername())
-                .orElseThrow(() -> new ApiException(NOT_FOUND_USER));
+                .orElseThrow(() -> new ApiException(NOT_FOUND_USER_ERROR));
     }
 
     private void checkPassword(String rawPassword, String encodedPassword) {
         if (!passwordEncoder.matches(rawPassword, encodedPassword)) {
-            throw new ApiException(NOT_FOUND_USER);
+            throw new ApiException(NOT_FOUND_USER_ERROR);
         }
     }
 

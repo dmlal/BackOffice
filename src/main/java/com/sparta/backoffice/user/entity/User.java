@@ -3,12 +3,14 @@ package com.sparta.backoffice.user.entity;
 
 import com.sparta.backoffice.follow.entity.Follow;
 import com.sparta.backoffice.global.entity.BaseEntity;
+import com.sparta.backoffice.like.entity.Like;
 import com.sparta.backoffice.post.entity.Post;
 import com.sparta.backoffice.user.constant.UserRoleEnum;
 
 import com.sparta.backoffice.user.dto.request.ProfileUpdateRequestDto;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,13 +32,13 @@ public class User extends BaseEntity {
     @Column(nullable = false)
     private String password;
 
-    @Column(nullable = false, unique = true)
+    @Column(unique = true)
     private String nickname;
 
-    @Column(nullable = false, name = "introduction")
+    @Column(name = "introduction")
     private String intro;
 
-    @Column(nullable = false, name = "profile_link")
+    @Column(name = "profile_link")
     private String link;
 
     @Column(name = "profile_image")
@@ -81,16 +83,21 @@ public class User extends BaseEntity {
         return this;
     }
 
-    public User(String username, String password) {
+    public User(String username, String password, UserRoleEnum role) {
         this.username = username;
         this.password = password;
-        this.role = UserRoleEnum.USER;
+        this.role = role;
     }
 
 
     // 좋아요와 1대다
+    @OneToMany(mappedBy = "user")
+    private List<Like> likes;
+
 
     // 팔로우와 다대 1
 
-
+    public void addLike(Like like) {
+        likes.add(like);
+    }
 }

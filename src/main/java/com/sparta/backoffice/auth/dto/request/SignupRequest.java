@@ -1,5 +1,6 @@
 package com.sparta.backoffice.auth.dto.request;
 
+import com.sparta.backoffice.user.constant.UserRoleEnum;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.sparta.backoffice.user.entity.User;
@@ -37,8 +38,10 @@ public class SignupRequest {
 	)
 	@NotBlank
 	private final String password;
+	private boolean admin = false;
+    private String adminToken = "";
 
-	public User toEntity(PasswordEncoder passwordEncoder) {
-		return new User(username, passwordEncoder.encode(password));
+	public User toEntity(PasswordEncoder passwordEncoder, UserRoleEnum role) {
+		return new User(username, passwordEncoder.encode(password), role);
 	}
 }
