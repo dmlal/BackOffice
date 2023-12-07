@@ -58,28 +58,4 @@ public class PostController {
         return ResponseEntity.status(HttpStatus.OK).body(
                 BaseResponse.of(GET_POST_DETAIL, responseDto));
     }
-
-    @GetMapping("/users/{userId}/likes/posts")
-    public ResponseEntity<BaseResponse<List<PostResponseDto>>> getUserLikedPosts(
-            @PathVariable Long userId,
-            @RequestParam Integer cursor,
-            @RequestParam Integer size,
-            @RequestParam String dir
-    ) {
-        List<PostResponseDto> userLikedPosts = postService.getUserLikedPosts(userId, cursor, size, dir);
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(BaseResponse.of(GET_LIKE_POSTS, userLikedPosts));
-    }
-
-    @GetMapping("/follows/posts")
-    public ResponseEntity<BaseResponse<List<PostResponseDto>>> getFollowingPosts(
-            @RequestParam Integer cursor,
-            @RequestParam Integer size,
-            @RequestParam String dir,
-            @AuthUser User user
-    ) {
-        List<PostResponseDto> followingPosts = postService.getFollowingPosts(cursor, size, dir, user);
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(BaseResponse.of(GET_FOLLOWING_POSTS, followingPosts));
-    }
 }

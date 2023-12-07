@@ -1,10 +1,7 @@
 package com.sparta.backoffice.post.service;
 
-import com.sparta.backoffice.global.constant.ErrorCode;
 import com.sparta.backoffice.global.exception.ApiException;
 import com.sparta.backoffice.post.dto.PostDetailsResponseDto;
-import com.sparta.backoffice.like.dto.LikeUserResponseDto;
-import com.sparta.backoffice.like.entity.Like;
 import com.sparta.backoffice.post.dto.PostRequestDto;
 import com.sparta.backoffice.post.dto.PostResponseDto;
 import com.sparta.backoffice.post.entity.Post;
@@ -18,17 +15,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import static com.sparta.backoffice.global.constant.ErrorCode.*;
 
@@ -168,7 +160,7 @@ public class PostService {
                 Sort.Direction.DESC : Sort.Direction.ASC, "createdAt");
 
         Pageable pageable = PageRequest.of(cursor, size, sort);
-        Page<Post> posts = postRepository.findPostsByLikesUserId(userId, pageable);
+        Page<Post> posts = postRepository.findPostsByLikes(userId, pageable);
 
         return posts.stream()
                 .map(PostResponseDto::new).toList();
