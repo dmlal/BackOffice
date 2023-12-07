@@ -17,6 +17,7 @@ public class PostResponseDto {
     Long parentPostId;
     Integer likesCount;
     Boolean isDeleted;
+    Boolean isPrivate;
 
     public PostResponseDto(Post post) {
         this.id = post.getId();
@@ -29,5 +30,6 @@ public class PostResponseDto {
         this.userSimpleDto = new UserSimpleDto(post.getUser());
         this.isDeleted = post.isDeleted();
         this.likesCount = post.getLikes().size();
+        this.isPrivate = post.getUser().getIsPrivate();
     }
 }

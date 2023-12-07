@@ -19,6 +19,7 @@ public class ChildPostResponseDto {
     Long parentPostId;
     Integer likesCount;
     Boolean isDeleted;
+    Boolean isPrivate;
     List<ChildPostResponseDto> childs;
 
     public ChildPostResponseDto(Post post) {
@@ -31,8 +32,8 @@ public class ChildPostResponseDto {
             this.parentPostId = post.getParentPost().getId();
         this.userSimpleDto = new UserSimpleDto(post.getUser());
         this.likesCount = post.getLikes().size();
-        this.isDeleted=post.isDeleted();
+        this.isDeleted = post.isDeleted();
         this.childs = post.getChildPosts().stream().map(ChildPostResponseDto::new).toList();
-
+        this.isPrivate = post.getUser().getIsPrivate();
     }
 }
