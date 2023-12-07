@@ -2,7 +2,6 @@ package com.sparta.backoffice.global.constant;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-
 @Getter
 @AllArgsConstructor
 public enum ErrorCode {
