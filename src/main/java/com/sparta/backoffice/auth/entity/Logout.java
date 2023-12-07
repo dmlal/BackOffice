@@ -24,7 +24,7 @@ public class Logout extends BaseEntity {
 	@Id
 	private String accessToken;
 	
-	@Coloumn
+	@Column
 	private String username;
 
 	public static Logout of(String accessToken, String username) {
