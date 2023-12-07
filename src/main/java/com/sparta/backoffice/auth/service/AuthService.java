@@ -42,7 +42,7 @@ public class AuthService {
         UserRoleEnum role = UserRoleEnum.USER;
         if (request.isAdmin()) {
             if (!ADMIN_TOKEN.equals(request.getAdminToken())) {
-                throw new ApiException(NOT_EQUALS_ADMIN_TOKEB_ERROR);
+                throw new ApiException(NOT_EQUALS_ADMIN_TOKEN_ERROR);
             }
             role = UserRoleEnum.ADMIN;
         }

@@ -13,7 +13,7 @@ public enum ErrorCode {
     CAN_NOT_MODIFY_ERROR(400, "작성자만 수정할 수 있습니다."),
     CAN_NOT_DELETE_ERROR(400, "작성자만 삭제할 수 있습니다."),
     SELF_LIKE_ERROR(400, "자신의 게시글은 좋아요 할 수 없습니다."),
-    NOT_EQUALS_ADMIN_TOKEB_ERROR(400, "관리자 암호가 틀려 등록이 불가능합니다."),
+    NOT_EQUALS_ADMIN_TOKEN_ERROR(400, "관리자 암호가 틀려 등록이 불가능합니다."),
 
     /* 404 NOT_FOUND : Resource 를 찾을 수 없음 */
     CAN_NOT_REPLY_POST_ERROR(404, "존재 하지 않는 게시글에 답글을 달 수 없습니다."),
