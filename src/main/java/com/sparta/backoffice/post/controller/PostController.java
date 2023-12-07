@@ -43,10 +43,11 @@ public class PostController {
                 BaseResponse.of(DELETED_POST, null));
     }
 
+    //내가 팔로잉한 사람이 아니라면 볼 수 없게 처리해야한다.
     @GetMapping("/{postId}")
     public ResponseEntity<BaseResponse<PostDetailsResponseDto>> getPost(@PathVariable Long postId) {
         PostDetailsResponseDto responseDto = postService.getPost(postId);
         return ResponseEntity.status(HttpStatus.OK).body(
-                BaseResponse.of("게시글 상세 조회 성공", HttpStatus.OK.value(), responseDto));
+                BaseResponse.of(GET_POST_DETAIL, responseDto));
     }
 }
