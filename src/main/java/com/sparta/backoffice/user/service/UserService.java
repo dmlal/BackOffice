@@ -1,6 +1,7 @@
 package com.sparta.backoffice.user.service;
 
 import com.sparta.backoffice.global.exception.ApiException;
+import com.sparta.backoffice.user.constant.UserRoleEnum;
 import com.sparta.backoffice.user.dto.UserInfoDto;
 import com.sparta.backoffice.user.dto.request.PasswordUpdateRequestDto;
 import com.sparta.backoffice.user.dto.request.ProfileUpdateRequestDto;
@@ -36,7 +37,9 @@ public class UserService {
     public ProfileUpdateResponseDto updateProfile(Long userId, ProfileUpdateRequestDto requestDto, User authUser) {
         User user = foundUser(userId);
 
-        checkUserPermission(user, authUser);
+        if(!authUser.getRole().equals(UserRoleEnum.ADMIN)) {
+            checkUserPermission(user, authUser);
+        }
 
         String newNickname = requestDto.getNickname();
         if (!newNickname.equals(user.getNickname()) && userRepository.existsByNickname(newNickname)) {  // 기존닉네임과 같은지 , 닉네임이 중복인지
