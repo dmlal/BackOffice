@@ -5,6 +5,7 @@ import com.sparta.backoffice.global.dto.BaseResponse;
 import com.sparta.backoffice.user.dto.request.PasswordUpdateRequestDto;
 import com.sparta.backoffice.user.dto.request.ProfileUpdateRequestDto;
 import com.sparta.backoffice.user.dto.response.ProfileUpdateResponseDto;
+import com.sparta.backoffice.user.entity.User;
 import com.sparta.backoffice.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;

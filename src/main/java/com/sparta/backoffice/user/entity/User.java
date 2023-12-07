@@ -1,7 +1,6 @@
 package com.sparta.backoffice.user.entity;
 
 
-import com.sparta.backoffice.follow.entity.Follow;
 import com.sparta.backoffice.global.entity.BaseEntity;
 import com.sparta.backoffice.like.entity.Like;
 import com.sparta.backoffice.post.entity.Post;
@@ -10,7 +9,6 @@ import com.sparta.backoffice.user.constant.UserRoleEnum;
 import com.sparta.backoffice.user.dto.request.ProfileUpdateRequestDto;
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,11 +59,11 @@ public class User extends BaseEntity {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<PasswordHistory> passwordHistories = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user")  // 팔로잉을 찾으면 follower를 불러온다
-    private List<Follow> follwerList = new ArrayList<>();
-
-    @OneToMany(mappedBy = "followUser")   // following
-    private List<Follow> follwingList = new ArrayList<>();
+//    @OneToMany(mappedBy = "user")  // 팔로잉을 찾으면 follower를 불러온다
+//    private List<Follow> follwerList = new ArrayList<>();
+//
+//    @OneToMany(mappedBy = "followUser")   // following
+//    private List<Follow> follwingList = new ArrayList<>();
 
 
     public User updateProfile(ProfileUpdateRequestDto requestDto) {

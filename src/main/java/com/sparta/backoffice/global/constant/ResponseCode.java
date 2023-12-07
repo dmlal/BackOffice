@@ -17,7 +17,7 @@ public enum ResponseCode {
     SIGNUP(201, "회원가입 성공"),
     LOGIN(201, "로그인 성공"),
     CREATED_POST(201, "게시글 작성 성공"),
-    MODIFIYED_POST(200, "게시글 수정 성공"),
+    MODIFIED_POST(200, "게시글 수정 성공"),
     DELETED_POST(200, "게시글 삭제 성공"),
     UPDATE_PROFILE(200, "프로필 정보 변경 성공"),
     UPDATE_PASSWORD(200, "비밀번호 변경 성공"),
