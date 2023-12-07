@@ -1,6 +1,7 @@
 package com.sparta.backoffice.post.service;
 
 import com.sparta.backoffice.global.exception.ApiException;
+import com.sparta.backoffice.post.dto.PostDetailsResponseDto;
 import com.sparta.backoffice.post.dto.PostRequestDto;
 import com.sparta.backoffice.post.dto.PostResponseDto;
 import com.sparta.backoffice.post.entity.Post;
@@ -52,7 +53,6 @@ public class PostService {
 
         Post post = postRepository.findByIdAndIsDeletedFalse(postId).orElseThrow(
                 () -> new ApiException(NOT_FOUND_POST_ERROR));
-
 
 
         if (!post.getUser().getId().equals(user.getId())) {
@@ -136,5 +136,12 @@ public class PostService {
         Page<Post> posts = postRepository.findByUserAndParentPostIsNullAndIsDeletedFalse(user, pageable);
 
         return posts.stream().map(PostResponseDto::new).toList();
+    }
+
+    public PostDetailsResponseDto getPost(Long postId) {
+        Post post = postRepository.findByIdAndIsDeletedFalse(postId).orElseThrow(
+                () -> new ApiException(NOT_FOUND_POST_ERROR));
+
+        return new PostDetailsResponseDto(post);
     }
 }

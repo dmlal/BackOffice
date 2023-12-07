@@ -2,6 +2,7 @@ package com.sparta.backoffice.post.controller;
 
 import com.sparta.backoffice.global.annotation.AuthUser;
 import com.sparta.backoffice.global.dto.BaseResponse;
+import com.sparta.backoffice.post.dto.PostDetailsResponseDto;
 import com.sparta.backoffice.post.dto.PostRequestDto;
 import com.sparta.backoffice.post.dto.PostResponseDto;
 import com.sparta.backoffice.post.service.PostService;
@@ -40,5 +41,12 @@ public class PostController {
         postService.deletePost(postId, user);
         return ResponseEntity.status(HttpStatus.OK).body(
                 BaseResponse.of(DELETED_POST, null));
+    }
+
+    @GetMapping("/{postId}")
+    public ResponseEntity<BaseResponse<PostDetailsResponseDto>> getPost(@PathVariable Long postId) {
+        PostDetailsResponseDto responseDto = postService.getPost(postId);
+        return ResponseEntity.status(HttpStatus.OK).body(
+                BaseResponse.of("게시글 상세 조회 성공", HttpStatus.OK.value(), responseDto));
     }
 }
