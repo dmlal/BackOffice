@@ -38,7 +38,7 @@ public class UserService {
 
         String newNickname = requestDto.getNickname();
         if(!newNickname.equals(user.getNickname()) && userRepository.existsByNickname(newNickname)){  // 기존닉네임과 같은지 , 닉네임이 중복인지
-            new ApiException(CAN_NOT_CHANGE_NICKNAME);
+            throw new ApiException(CAN_NOT_CHANGE_NICKNAME);
         }
 
         User newProfile = user.updateProfile(requestDto);
@@ -61,7 +61,7 @@ public class UserService {
 
         for (PasswordHistory passwordHistory : recentThreePasswords) {
             if (passwordEncoder.matches(requestDto.getPassword(), passwordHistory.getPassword())) {
-                new ApiException(RECENTLY_USED_PASSWORD);
+               throw new ApiException(RECENTLY_USED_PASSWORD);
             }
         }
 
@@ -82,7 +82,7 @@ public class UserService {
 
     private void checkUserPermission(User user, User authUser ) {
         if (!user.getUsername().equals(authUser.getUsername())) {
-            new ApiException(DENIED_AUTHORITY);
+            throw new ApiException(DENIED_AUTHORITY);
         }
     }
 }
