@@ -5,6 +5,7 @@ import com.sparta.backoffice.global.constant.ResponseCode;
 import com.sparta.backoffice.global.dto.BaseResponse;
 import com.sparta.backoffice.like.dto.LikeUserResponseDto;
 import com.sparta.backoffice.like.service.LikeService;
+import com.sparta.backoffice.user.dto.UserSimpleDto;
 import com.sparta.backoffice.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -43,13 +44,13 @@ public class LikeController {
     }
 
     @GetMapping("/likes/{postId}")
-    public ResponseEntity<BaseResponse<List<LikeUserResponseDto>>> getLikedUsers(
+    public ResponseEntity<BaseResponse<List<UserSimpleDto>>> getLikedUsers(
             @PathVariable Long postId,
             @RequestParam Integer cursor,
             @RequestParam Integer size,
             @RequestParam String dir
     ) {
-        List<LikeUserResponseDto> likedUsers = likeService.getLikedUsers(postId, cursor, size, dir);
+        List<UserSimpleDto> likedUsers = likeService.getLikedUsers(postId, cursor, size, dir);
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(BaseResponse.of(ResponseCode.GET_LIKE_USERS, likedUsers));
