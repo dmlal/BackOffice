@@ -14,10 +14,10 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher;
 import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 
+import com.sparta.backoffice.auth.repository.LogoutRepository;
 import com.sparta.backoffice.global.security.CustomUserDetailService;
 import com.sparta.backoffice.global.security.JwtAuthorizationFilter;
 import com.sparta.backoffice.global.util.JwtProvider;
-import com.sparta.backoffice.global.util.RedisUtils;
 
 import lombok.RequiredArgsConstructor;
 
@@ -26,6 +26,7 @@ import lombok.RequiredArgsConstructor;
 @Configuration
 public class SecurityConfig {
 	private final JwtProvider jwtProvider;
+	private final LogoutRepository logoutRepository;
 	private final CustomUserDetailService userDetailService;
 
 	@Bean
@@ -48,6 +49,7 @@ public class SecurityConfig {
 						.anyRequest().authenticated()
 		);
 
+
 		// 필터 관리
 		http.addFilterBefore(jwtAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
 
@@ -64,7 +66,7 @@ public class SecurityConfig {
 	}
 	@Bean
 	public JwtAuthorizationFilter jwtAuthorizationFilter() {
-		return new JwtAuthorizationFilter(jwtProvider, userDetailService);
+		return new JwtAuthorizationFilter(jwtProvider, userDetailService, logoutRepository);
 	}
 
 	private static final String[] WHITE_LIST_URL = {

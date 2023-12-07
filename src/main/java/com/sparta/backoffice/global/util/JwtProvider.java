@@ -1,19 +1,18 @@
 package com.sparta.backoffice.global.util;
 
 import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import com.sparta.backoffice.auth.dto.TokenDto;
 import com.sparta.backoffice.global.properties.JwtProperties;
 import com.sparta.backoffice.user.constant.UserRoleEnum;
-import com.sparta.backoffice.user.entity.User;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -27,9 +26,10 @@ import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
+@Getter
 @Slf4j(topic = "Jwt 유틸")
 @RequiredArgsConstructor
 @Component
@@ -63,10 +63,10 @@ public class JwtProvider {
 			return null;
 		}
 
-		return subStringToken(tokenValue);
+		return substringToken(tokenValue);
 	}
 
-	private String subStringToken(String tokenValue) {
+	private String substringToken(String tokenValue) {
 		if (StringUtils.hasText(tokenValue) && tokenValue.startsWith(BEARER_PREFIX)) {
 			return tokenValue.substring(7);
 		}
@@ -101,10 +101,8 @@ public class JwtProvider {
 	}
 
 	//토큰 생성
-	public TokenDto createToken(User user) {
+	public TokenDto createToken(String username, UserRoleEnum role) {
 		Date date = new Date();
-		String username = user.getUsername();
-		UserRoleEnum role = user.getRole();
 
 		String accessToken =
 			Jwts.builder()
@@ -150,5 +148,25 @@ public class JwtProvider {
 
 	private void setHeaderAccessToken(String accessToken, HttpServletResponse response) {
 		response.setHeader(AUTHORIZATION_HEADER, BEARER_PREFIX + accessToken);
+	}
+
+	public String getRefreshTokenFromCookie(HttpServletRequest request) {
+		Cookie[] cookies = request.getCookies();
+
+		if (cookies == null) {
+			return null;
+		}
+
+		String token = "";
+		for (Cookie cookie : cookies) {
+			if (cookie.getName().equals(REFRESH_TOKEN_HEADER)) {
+				try {
+					token = URLDecoder.decode(cookie.getValue(), "UTF-8"); // Encode 되어 넘어간 Value 다시 Decode
+				} catch (UnsupportedEncodingException e) {
+					break;
+				}
+			}
+		}
+		return substringToken(token);
 	}
 }
