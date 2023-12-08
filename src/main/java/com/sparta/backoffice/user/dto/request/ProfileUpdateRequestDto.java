@@ -11,7 +11,7 @@ import java.io.File;
 @RequiredArgsConstructor
 public class ProfileUpdateRequestDto {
 
-    private final String username;
+//    private final String username;
 
     private final String nickname;
 

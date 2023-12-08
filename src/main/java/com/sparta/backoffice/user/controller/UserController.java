@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.*;
 import static com.sparta.backoffice.global.constant.ResponseCode.UPDATE_PASSWORD;
 import static com.sparta.backoffice.global.constant.ResponseCode.UPDATE_PROFILE;
 
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
 @RestController
 @RequestMapping("/api/users")
