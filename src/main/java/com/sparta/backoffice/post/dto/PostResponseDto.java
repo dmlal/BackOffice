@@ -5,11 +5,13 @@ import com.sparta.backoffice.user.dto.UserSimpleDto;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 public class PostResponseDto {
     Long id;
     String content;
+    List<String> imageUrls;
     LocalDateTime createdAt;
     LocalDateTime modifiedAt;
     UserSimpleDto userSimpleDto;
