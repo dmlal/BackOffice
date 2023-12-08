@@ -62,7 +62,7 @@ public class UserService {
         Pageable recentPasswords = PageRequest.of(0, 3);
         List<PasswordHistory> recentThreePasswords = passwordHistoryRepository.findTop3ByUserIdOrderByModifiedAtDesc(userId, recentPasswords);
 
-        String encodedNewPassword = passwordEncoder.encode(requestDto.getNewPassword());    // 비밀번호 암호화 필요
+        String encodedNewPassword = passwordEncoder.encode(requestDto.getNewPassword());
 
         for (PasswordHistory passwordHistory : recentThreePasswords) {
             if (passwordEncoder.matches(requestDto.getPassword(), passwordHistory.getPassword())) {

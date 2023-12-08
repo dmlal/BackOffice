@@ -1,6 +1,7 @@
 package com.sparta.backoffice.user.entity;
 
 
+import com.sparta.backoffice.follow.entity.Follow;
 import com.sparta.backoffice.global.entity.BaseEntity;
 import com.sparta.backoffice.like.entity.Like;
 import com.sparta.backoffice.post.entity.Post;
@@ -65,7 +66,6 @@ public class User extends BaseEntity {
     @OneToMany(mappedBy = "follower")   // following
     private List<Follow> followings = new ArrayList<>();
 
-
     public User updateProfile(ProfileUpdateRequestDto requestDto) {
         this.nickname = requestDto.getNickname();
         this.intro = requestDto.getIntro();
@@ -87,6 +87,9 @@ public class User extends BaseEntity {
         this.role = role;
     }
 
+//    public List<User> getFollowerListAll() {
+//        this.followerList.stream().map(follow -> follow.getFollower()).toList();
+//    }   팔로우서비스보다 이게 더 낫다.  JPQL만 잘쓴다면..
 
     // 좋아요와 1대다
     @OneToMany(mappedBy = "user")
