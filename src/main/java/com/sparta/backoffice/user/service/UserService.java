@@ -81,20 +81,10 @@ public class UserService {
         passwordHistoryRepository.save(updatedPasswordHistory);
     }
 
-    private User foundUser(Long userId) {
-        return userRepository.findById(userId).orElseThrow(() ->
-            new ApiException(NOT_FOUND_USER_ERROR));
-    }
-
-    private void checkUserPermission(User user, User authUser) {
-        if (!user.getUsername().equals(authUser.getUsername())) {
-            throw new ApiException(DENIED_AUTHORITY);
-        }
-    }
 
     public List<UserInfoDto> getAllUsers(Integer cursor, Integer size, String dir) {
         Sort sort = Sort.by(dir.equalsIgnoreCase("desc") ?
-            Sort.Direction.DESC : Sort.Direction.ASC, "createdAt");
+                Sort.Direction.DESC : Sort.Direction.ASC, "createdAt");
 
         Pageable pageable = PageRequest.of(cursor, size, sort);
 
@@ -146,4 +136,21 @@ public class UserService {
             user.unblock();
         }
     }
+
+    public UserInfoDto getUserInfo(Long userId, User loginUser) {
+        User findUser = foundUser(userId);
+        return new UserInfoDto(findUser);
+    }
+
+    private User foundUser(Long userId) {
+        return userRepository.findById(userId).orElseThrow(() ->
+                new ApiException(NOT_FOUND_USER_ERROR));
+    }
+
+    private void checkUserPermission(User user, User authUser) {
+        if (!user.getUsername().equals(authUser.getUsername())) {
+            throw new ApiException(DENIED_AUTHORITY);
+        }
+    }
+
 }
