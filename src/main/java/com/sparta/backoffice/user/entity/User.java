@@ -61,11 +61,10 @@ public class User extends BaseEntity {
     private List<PasswordHistory> passwordHistories = new ArrayList<>();
 
     @OneToMany(mappedBy = "following")  // 팔로잉을 찾으면 follower를 불러온다
-    private List<Follow> followerList = new ArrayList<>();
+    private List<Follow> followers = new ArrayList<>();
 
     @OneToMany(mappedBy = "follower")   // following
-    private List<Follow> follwingList = new ArrayList<>();
-
+    private List<Follow> followings = new ArrayList<>();
 
     public User updateProfile(ProfileUpdateRequestDto requestDto) {
         this.nickname = requestDto.getNickname();
@@ -82,10 +81,10 @@ public class User extends BaseEntity {
         return this;
     }
 
-    public User(String username, String password) {
+    public User(String username, String password, UserRoleEnum role) {
         this.username = username;
         this.password = password;
-        this.role = UserRoleEnum.USER;
+        this.role = role;
     }
 
 
