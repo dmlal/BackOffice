@@ -1,5 +1,6 @@
 package com.sparta.backoffice.global.config;
 
+import com.sparta.backoffice.auth.repository.LogoutRepository;
 import com.sparta.backoffice.global.security.CustomUserDetailService;
 import com.sparta.backoffice.global.security.JwtAuthorizationFilter;
 import com.sparta.backoffice.global.util.JwtProvider;
@@ -30,6 +31,7 @@ public class SecurityConfig {
     private final AccessDeniedHandler customAccessDeniedHandler;
     private final AuthenticationEntryPoint customAuthenticationEntryPoint;
     private final CustomUserDetailService userDetailService;
+    private final LogoutRepository logoutRepository;
 
 
     @Bean
@@ -72,7 +74,7 @@ public class SecurityConfig {
 
     @Bean
     public JwtAuthorizationFilter jwtAuthorizationFilter() {
-        return new JwtAuthorizationFilter(jwtProvider, userDetailService);
+        return new JwtAuthorizationFilter(jwtProvider, userDetailService, logoutRepository);
     }
 
     private static final String[] WHITE_LIST_URL = {
