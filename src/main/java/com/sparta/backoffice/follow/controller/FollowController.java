@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static com.sparta.backoffice.global.constant.ErrorCode.ALREADY_UNFOLLOW_USER;
 import static com.sparta.backoffice.global.constant.ResponseCode.*;
 
 @RestController
@@ -56,7 +57,7 @@ public class FollowController {
         followService.followUser(userId, authUser);
 
         return ResponseEntity
-                .status(HttpStatus.OK)
+                .status(FOLLOW_USER.getHttpStatus())
                 .body(BaseResponse.of(FOLLOW_USER,""));
     }
 
@@ -89,14 +90,14 @@ public class FollowController {
         followService.unfollowUser(userId, user);
 
         return ResponseEntity
-                .status(HttpStatus.OK)
+                .status(UNFOLLOW_USER.getHttpStatus())
                 .body(BaseResponse.of(UNFOLLOW_USER,""));
     }
 
     @Operation(summary = "팔로워리스트", description = "유저 팔로우리스트 API")
     @ApiResponses(value = {
             @ApiResponse(
-                    responseCode = "201",
+                    responseCode = "200",
                     description = "팔로워 리스트",
                     content = @Content(schema = @Schema(implementation = BaseResponse.class))
             ),
@@ -110,14 +111,14 @@ public class FollowController {
     public ResponseEntity<BaseResponse<List<FollowUserResponseDto>>> getFollowerList(@PathVariable Long userId, @AuthUser User user) {
         List<FollowUserResponseDto> responseDto = followService.getFollowerList(userId, user);
         return ResponseEntity
-                .status(HttpStatus.CREATED)
+                .status(GET_FOLLOW_LIST.getHttpStatus())
                 .body(BaseResponse.of(GET_FOLLOW_LIST, responseDto));
     }
 
     @Operation(summary = "팔로잉 리스트", description = "유저 팔로잉 리스트 API")
     @ApiResponses(value = {
             @ApiResponse(
-                    responseCode = "201",
+                    responseCode = "200",
                     description = "팔로잉 리스트",
                     content = @Content(schema = @Schema(implementation = BaseResponse.class))
             ),
@@ -131,7 +132,7 @@ public class FollowController {
     public ResponseEntity<BaseResponse<List<FollowUserResponseDto>>> getFollowingList(@PathVariable Long userId, @AuthUser User user) {
         List<FollowUserResponseDto> responseDto = followService.getFollowingList(userId, user);
         return ResponseEntity
-                .status(HttpStatus.CREATED)
+                .status(GET_FOLLOW_LIST.getHttpStatus())
                 .body(BaseResponse.of(GET_FOLLOW_LIST, responseDto));
 
     }

@@ -1,11 +1,9 @@
 package com.sparta.backoffice.follow.service;
 
-import com.sparta.backoffice.follow.dto.FollowResponseDto;
 import com.sparta.backoffice.follow.dto.FollowUserResponseDto;
 import com.sparta.backoffice.follow.entity.Follow;
 import com.sparta.backoffice.follow.repository.FollowRepository;
 import com.sparta.backoffice.global.exception.ApiException;
-import com.sparta.backoffice.user.dto.UserSimpleDto;
 import com.sparta.backoffice.user.entity.User;
 import com.sparta.backoffice.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
