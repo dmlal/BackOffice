@@ -21,6 +21,8 @@ import org.springframework.web.bind.annotation.*;
 import static com.sparta.backoffice.global.constant.ResponseCode.UPDATE_PASSWORD;
 import static com.sparta.backoffice.global.constant.ResponseCode.UPDATE_PROFILE;
 
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
@@ -28,30 +30,29 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-
-@Operation(summary = "프로필 수정", description = "프로필 수정 API")
-@ApiResponses(value = {
-        @ApiResponse(
-                responseCode = "200",
-                description = "수정 완료",
-                content = @Content(schema = @Schema(implementation = BaseResponse.class))
-        ),
-        @ApiResponse(
-                responseCode = "404",
-                description = "유저를 찾을 수 없습니다.",
-                content = @Content(schema = @Schema(implementation = BaseResponse.class))
-        ),
-        @ApiResponse(
-                responseCode = "403",
-                description = "권한이 없습니다.",
-                content = @Content(schema = @Schema(implementation = BaseResponse.class))
-        ),
-        @ApiResponse(
-                responseCode = "400",
-                description = "닉네임을 변경할 수 없습니다.",
-                content = @Content(schema = @Schema(implementation = BaseResponse.class))
-        )
-})
+    @Operation(summary = "프로필 수정", description = "프로필 수정 API")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "수정 완료",
+                    content = @Content(schema = @Schema(implementation = BaseResponse.class))
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "유저를 찾을 수 없습니다.",
+                    content = @Content(schema = @Schema(implementation = BaseResponse.class))
+            ),
+            @ApiResponse(
+                    responseCode = "403",
+                    description = "권한이 없습니다.",
+                    content = @Content(schema = @Schema(implementation = BaseResponse.class))
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "닉네임을 변경할 수 없습니다.",
+                    content = @Content(schema = @Schema(implementation = BaseResponse.class))
+            )
+    })
     @PutMapping("/{userId}")
     public ResponseEntity<BaseResponse<ProfileUpdateResponseDto>> updateProfile(@PathVariable Long userId,
                                                                                 @RequestBody ProfileUpdateRequestDto requestDto,
