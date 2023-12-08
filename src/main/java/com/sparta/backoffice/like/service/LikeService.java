@@ -22,6 +22,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static com.sparta.backoffice.global.constant.ErrorCode.NOT_FOUND_POST_ERROR;
+import static com.sparta.backoffice.global.constant.ErrorCode.NOT_FOUND_USER_ERROR;
+
 @Service
 @RequiredArgsConstructor
 public class LikeService {
@@ -62,6 +65,10 @@ public class LikeService {
             Integer size,
             String direction
     ) {
+        if (!postRepository.existsById(postId)) {
+            throw new ApiException(NOT_FOUND_POST_ERROR);
+        }
+
         Sort sort = Sort.by(direction.equalsIgnoreCase("desc") ?
                 Direction.DESC : Direction.ASC, "createdAt");
 

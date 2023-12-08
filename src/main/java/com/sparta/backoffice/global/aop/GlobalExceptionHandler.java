@@ -1,5 +1,6 @@
 package com.sparta.backoffice.global.aop;
 
+import com.sparta.backoffice.global.constant.ErrorCode;
 import com.sparta.backoffice.global.dto.BaseResponse;
 import com.sparta.backoffice.global.exception.ApiException;
 
@@ -21,6 +22,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import static com.sparta.backoffice.global.constant.ErrorCode.*;
 
+import java.nio.file.AccessDeniedException;
 import java.util.HashMap;
 
 @Slf4j
@@ -110,4 +112,5 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                         )
                 );
     }
+
 }
