@@ -64,6 +64,4 @@ public class AdminUserConroller {
                 .body(BaseResponse.of(ResponseCode.DELETED_USER,""));
     }
 
-    //유저 권한 변경
-    //유저 차단
 }
