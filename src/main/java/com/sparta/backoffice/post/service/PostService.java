@@ -5,7 +5,9 @@ import com.sparta.backoffice.post.dto.PostDetailsResponseDto;
 import com.sparta.backoffice.post.dto.PostRequestDto;
 import com.sparta.backoffice.post.dto.PostResponseDto;
 import com.sparta.backoffice.post.entity.Post;
+import com.sparta.backoffice.post.entity.PostImage;
 import com.sparta.backoffice.post.repository.PostRepository;
+import com.sparta.backoffice.post.s3.S3Uploader;
 import com.sparta.backoffice.user.constant.UserRoleEnum;
 import com.sparta.backoffice.user.entity.User;
 import com.sparta.backoffice.user.repository.UserRepository;
@@ -17,6 +19,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -31,8 +34,14 @@ public class PostService {
 
     private final PostRepository postRepository;
     private final UserRepository userRepository;
+    private final S3Uploader s3Uploader;
 
-    public PostResponseDto createPost(PostRequestDto requestDto, User user) {
+    @Transactional
+    public PostResponseDto createPost(
+            PostRequestDto requestDto,
+            User user,
+            MultipartFile[] images
+    ) {
         Post post;
 
         if (requestDto.getParentPostId() != null) {
@@ -46,7 +55,11 @@ public class PostService {
             //부모가 존재하지 않음
             post = new Post(requestDto, user);
         }
-        Post savedPost = postRepository.save(post);
+
+        Post savedPost = postRepository.save(postRepository.save(post));
+        if (images.length > 0) {
+            s3Uploader.uploadPostImages(savedPost.getId().toString(), images);
+        }
         return new PostResponseDto(savedPost);
     }
 

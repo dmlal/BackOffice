@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -27,8 +28,12 @@ public class PostController {
     private final PostService postService;
 
     @PostMapping
-    public ResponseEntity<BaseResponse<PostResponseDto>> createPost(@RequestBody @Valid PostRequestDto requestDto, @AuthUser User user) {
-        PostResponseDto postResponseDto = postService.createPost(requestDto, user);
+    public ResponseEntity<BaseResponse<PostResponseDto>> createPost(
+            @RequestParam("images") MultipartFile[] images,
+            @RequestPart("data") @Valid PostRequestDto requestDto,
+            @AuthUser User user
+    ) {
+        PostResponseDto postResponseDto = postService.createPost(requestDto, user, images);
         return ResponseEntity.status(HttpStatus.CREATED).body(
                 BaseResponse.of(CREATED_POST, postResponseDto));
     }

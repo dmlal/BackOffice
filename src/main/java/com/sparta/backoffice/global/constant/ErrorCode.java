@@ -1,7 +1,9 @@
 package com.sparta.backoffice.global.constant;
 
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+
 @Getter
 @AllArgsConstructor
 public enum ErrorCode {
@@ -13,6 +15,7 @@ public enum ErrorCode {
     CAN_NOT_DELETE_ERROR(400, "작성자만 삭제할 수 있습니다."),
     CAN_NOT_CHANGE_NICKNAME(400, "닉네임을 변경할 수 없습니다."),
     RECENTLY_USED_PASSWORD(400, "최근 사용한 비밀번호입니다."),
+    CAN_NOT_READ_IMAGE(400, "게시글에 포함된 이미지를 처리할 수 없습니다."),
     CAN_NOT_FOLLOW_YOURSELF(400, "자기자신은 팔로우할 수 없습니다."),
     CAN_NOT_UNFOLLOW_YOURSELF(400, "자기자신은 언팔로우할 수 없습니다."),
     ALREADY_FOLLOW_USER(400, "이미 팔로우한 사용자입니다."),

@@ -25,6 +25,9 @@ public class Post extends BaseEntity {
     @Column(nullable = false)
     private String content;
 
+    @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
+    private List<PostImage> images;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_post_id")
     private Post parentPost;
