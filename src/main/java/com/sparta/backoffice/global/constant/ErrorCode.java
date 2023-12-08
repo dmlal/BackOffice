@@ -15,8 +15,10 @@ public enum ErrorCode {
     CAN_NOT_CHANGE_NICKNAME(400, "닉네임을 변경할 수 없습니다."),
     RECENTLY_USED_PASSWORD(400, "최근 사용한 비밀번호입니다."),
 
+    /* 401 UNAUTHORIZED  :  인증 되지 않음 */
+    NOT_VALID_TOKEN(401, "토큰이 유효하지 않습니다"),
     /* 403 FORBIDDEN  :  권한 없음 */
-    DENIED_AUTHORITY(403,"권한이 없습니다."),
+    DENIED_AUTHORITY(403, "권한이 없습니다."),
     SELF_LIKE_ERROR(400, "자신의 게시글은 좋아요 할 수 없습니다."),
     NOT_EQUALS_ADMIN_TOKEN_ERROR(400, "관리자 암호가 틀려 등록이 불가능합니다."),
 
