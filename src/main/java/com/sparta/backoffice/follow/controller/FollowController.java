@@ -128,12 +128,12 @@ public class FollowController {
                     content = @Content(schema = @Schema(implementation = BaseResponse.class))
             )
     })
-    @GetMapping("/{userId}/follower")
+    @GetMapping("/{userId}/following")
     public ResponseEntity<BaseResponse<List<FollowUserResponseDto>>> getFollowingList(@PathVariable Long userId, @AuthUser User user) {
         List<FollowUserResponseDto> responseDto = followService.getFollowingList(userId, user);
         return ResponseEntity
-                .status(GET_FOLLOW_LIST.getHttpStatus())
-                .body(BaseResponse.of(GET_FOLLOW_LIST, responseDto));
+                .status(GET_FOLLOWING_LIST.getHttpStatus())
+                .body(BaseResponse.of(GET_FOLLOWING_LIST, responseDto));
 
     }
 

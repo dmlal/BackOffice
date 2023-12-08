@@ -17,7 +17,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Table(
 	name = "refresh_tokens",
-	indexes = @Index(name = "idx_refresh_token_refreshToken", columnList = "refreshToken")
+	indexes = @Index(name = "idx_refresh_token_refreshToken", columnList = "token")
 )
 @Entity
 public class RefreshToken extends BaseEntity {
