@@ -186,3 +186,6 @@ gradle-app.setting
 
 ### VS Code ###
 .vscode/
+
+### qodana ###
+qodana.yaml

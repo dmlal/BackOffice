@@ -1,6 +1,7 @@
 package com.sparta.backoffice.post.controller;
 
 import com.sparta.backoffice.global.annotation.AuthUser;
+import com.sparta.backoffice.global.constant.ResponseCode;
 import com.sparta.backoffice.global.dto.BaseResponse;
 import com.sparta.backoffice.post.dto.PostDetailsResponseDto;
 import com.sparta.backoffice.post.dto.PostRequestDto;
@@ -13,6 +14,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 import static com.sparta.backoffice.global.constant.ResponseCode.*;
 

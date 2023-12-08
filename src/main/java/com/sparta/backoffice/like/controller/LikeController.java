@@ -22,25 +22,25 @@ public class LikeController {
     private final LikeService likeService;
 
     @PostMapping("/likes/{postId}")
-    public ResponseEntity<BaseResponse<Void>> like(
+    public ResponseEntity<BaseResponse<String>> like(
             @PathVariable Long postId,
             @AuthUser User user
     ) {
         likeService.like(user, postId);
 
         return ResponseEntity.status(HttpStatus.OK)
-                .body(BaseResponse.of(ResponseCode.CREATED_LIKE, null));
+                .body(BaseResponse.of(ResponseCode.CREATED_LIKE, ""));
     }
 
     @DeleteMapping("/likes/{postId}")
-    public ResponseEntity<BaseResponse<Void>> unlike(
+    public ResponseEntity<BaseResponse<String>> unlike(
             @PathVariable Long postId,
             @AuthUser User user
     ) {
         likeService.unlike(user, postId);
 
         return ResponseEntity.status(HttpStatus.OK)
-                .body(BaseResponse.of(ResponseCode.DELETED_LIKE, null));
+                .body(BaseResponse.of(ResponseCode.DELETED_LIKE, ""));
     }
 
     @GetMapping("/likes/{postId}")
