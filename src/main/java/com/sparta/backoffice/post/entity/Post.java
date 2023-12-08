@@ -62,12 +62,9 @@ public class Post extends BaseEntity {
         this.isDeleted = true;
     }
 
-    public void changeStateIsDeletedAndWithdraw() {
-        this.content = "작성자가 회원 탈퇴하였습니다.";
-        this.isDeleted = true;
-    }
-
-    public void deleteWriter() {
+    public void changeStateIsDeletedAndRemoveWriter() {
         this.user = null;
+        this.isDeleted = true;
+        this.content = "작성자가 탈퇴하였습니다.";
     }
 }

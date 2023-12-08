@@ -27,17 +27,17 @@ public class AdminUserConroller {
     //모든 유저 목록 조회
     @GetMapping
     public ResponseEntity<BaseResponse<List<UserInfoDto>>> getAllUsers(
-            @RequestParam Integer cursor,
-            @RequestParam Integer size,
-            @RequestParam String dir
+        @RequestParam Integer cursor,
+        @RequestParam Integer size,
+        @RequestParam String dir
     ) {
 
         List<UserInfoDto> allUsers = userService.getAllUsers(cursor, size, dir);
         return ResponseEntity.ok().body(
-                BaseResponse.of(
-                        ResponseCode.GET_ALL_USER,
-                        allUsers
-                )
+            BaseResponse.of(
+                ResponseCode.GET_ALL_USER,
+                allUsers
+            )
         );
     }
 
@@ -51,17 +51,34 @@ public class AdminUserConroller {
         ProfileUpdateResponseDto responseDto = userService.updateProfile(userId, requestDto, authUser);
 
         return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(BaseResponse.of(UPDATE_PROFILE, responseDto));
+            .status(HttpStatus.OK)
+            .body(BaseResponse.of(UPDATE_PROFILE, responseDto));
     }
 
-    //유저 회원 탈퇴
+    //회원 강제 탈퇴
     @DeleteMapping("/{userId}")
     public ResponseEntity<BaseResponse<String>> deleteUser(@PathVariable Long userId, @AuthUser User user) {
         userService.deleteUser(userId, user);
         return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(BaseResponse.of(ResponseCode.DELETED_USER,""));
+            .status(HttpStatus.OK)
+            .body(BaseResponse.of(ResponseCode.DELETED_USER, ""));
     }
 
+    //회원 강제 차단
+    @PutMapping("/{userId}/block")
+    public ResponseEntity<BaseResponse<String>> blockUser(@PathVariable Long userId) {
+        userService.blockUser(userId);
+        return ResponseEntity
+            .status(HttpStatus.OK)
+            .body(BaseResponse.of(ResponseCode.BLOCK_USER, ""));
+    }
+
+    //회원 강제 차단 해지
+    @PutMapping("/{userId}/unblock")
+    public ResponseEntity<BaseResponse<String>> unblockUser(@PathVariable Long userId) {
+        userService.unblockUser(userId);
+        return ResponseEntity
+            .status(HttpStatus.OK)
+            .body(BaseResponse.of(ResponseCode.UNBLOCK_USER, ""));
+    }
 }

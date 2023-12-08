@@ -57,13 +57,13 @@ public class User extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private UserRoleEnum role;
 
-      @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
     private List<Like> likes = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<PasswordHistory> passwordHistories = new ArrayList<>();
 
-@OneToMany(mappedBy = "following")  // 팔로잉을 찾으면 follower를 불러온다
+    @OneToMany(mappedBy = "following")  // 팔로잉을 찾으면 follower를 불러온다
     private List<com.sparta.backoffice.follow.entity.Follow> followers = new ArrayList<>();
 
     @OneToMany(mappedBy = "follower")   // following
@@ -95,5 +95,13 @@ public class User extends BaseEntity {
 
     public void addLike(Like like) {
         likes.add(like);
+    }
+
+    public void block() {
+        this.role = UserRoleEnum.BLOCK;
+    }
+
+    public void unblock() {
+        this.role = UserRoleEnum.USER;
     }
 }

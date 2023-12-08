@@ -83,7 +83,7 @@ public class UserService {
 
     private User foundUser(Long userId) {
         return userRepository.findById(userId).orElseThrow(() ->
-                new ApiException(NOT_FOUND_USER_ERROR));
+            new ApiException(NOT_FOUND_USER_ERROR));
     }
 
     private void checkUserPermission(User user, User authUser) {
@@ -94,7 +94,7 @@ public class UserService {
 
     public List<UserInfoDto> getAllUsers(Integer cursor, Integer size, String dir) {
         Sort sort = Sort.by(dir.equalsIgnoreCase("desc") ?
-                Sort.Direction.DESC : Sort.Direction.ASC, "createdAt");
+            Sort.Direction.DESC : Sort.Direction.ASC, "createdAt");
 
         Pageable pageable = PageRequest.of(cursor, size, sort);
 
@@ -107,14 +107,43 @@ public class UserService {
     public void deleteUser(Long userId, User adminUser) {
         User user = foundUser(userId);
 
+        if (user.getRole().equals(UserRoleEnum.ADMIN)) {
+            throw new ApiException(NOT_ALLOW_ADMIN_DELETE);
+        }
+
         //유저가 쓴 게시글-> 유저 정보 지우고 / 삭제 상태로 변경(흔적은 남겨두기)
         List<Post> posts = user.getPostList();
         for (Post post : posts) {
             postService.deletePost(post.getId(), adminUser);
-            post.deleteWriter();
-            post.changeStateIsDeletedAndWithdraw();
+            post.changeStateIsDeletedAndRemoveWriter();
         }
 
         userRepository.delete(user);
+    }
+
+    @Transactional
+    public void blockUser(Long userId) {
+        User user = foundUser(userId);
+
+        if (user.getRole().equals(UserRoleEnum.ADMIN)) {
+            throw new ApiException(NOT_ALLOW_ADMIN_BLOCK);
+        } else if (user.getRole().equals(UserRoleEnum.BLOCK)) {
+            throw new ApiException(ALREADY_BLOCK_USER);
+        } else {
+            user.block();
+        }
+    }
+
+    @Transactional
+    public void unblockUser(Long userId) {
+        User user = foundUser(userId);
+
+        if (user.getRole().equals(UserRoleEnum.ADMIN)) {
+            throw new ApiException(NOT_ALLOW_ADMIN_BLOCK);
+        } else if (user.getRole().equals(UserRoleEnum.USER)) {
+            throw new ApiException(NOT_BLOCKD_USER);
+        } else {
+            user.unblock();
+        }
     }
 }

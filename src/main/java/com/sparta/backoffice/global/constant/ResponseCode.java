@@ -23,8 +23,11 @@ public enum ResponseCode {
     UPDATE_PROFILE(200, "프로필 정보 변경 성공"),
     UPDATE_PASSWORD(200, "비밀번호 변경 성공"),
     DELETED_POST(200, "게시글 삭제 성공"),
-    DELETED_LIKE(204, "좋아요 취소 성공"),
-    LOGOUT(204, "로그아웃 성공"),
+    DELETED_USER(200, "회원 탈퇴 성공"),
+    DELETED_LIKE(200, "좋아요 취소 성공"),
+    LOGOUT(200, "로그아웃 성공"),
+    BLOCK_USER(200, "회원 차단 성공"),
+    UNBLOCK_USER(200, "회원 차단 해지 성공"),
 
     /* 201 CREATED : Resource 생성 완료 */
     SIGNUP(201, "회원가입 성공"),
