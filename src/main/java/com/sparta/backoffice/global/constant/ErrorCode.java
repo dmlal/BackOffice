@@ -1,15 +1,14 @@
 package com.sparta.backoffice.global.constant;
 
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-
 @Getter
 @AllArgsConstructor
 public enum ErrorCode {
 
     /* 400 BAD_REQUEST : 잘못된 요청 */
     INVALID_VALUE(400, "유효하지 않은 값입니다."),
+    INVALID_TOKEN(400, "유효하지 않은 토큰 입니다."),
     CAN_NOT_MODIFY_ERROR(400, "작성자만 수정할 수 있습니다."),
     CAN_NOT_DELETE_ERROR(400, "작성자만 삭제할 수 있습니다."),
     CAN_NOT_CHANGE_NICKNAME(400, "닉네임을 변경할 수 없습니다."),
@@ -26,6 +25,12 @@ public enum ErrorCode {
     DENIED_AUTHORITY(403, "권한이 없습니다."),
     SELF_LIKE_ERROR(400, "자신의 게시글은 좋아요 할 수 없습니다."),
 
+    /* 404 UN_AUTHORIZED : 인증 불가 */
+    UNAUTHORIZED(401, "인증 정보가 유효하지 않습니다."),
+
+    /* 404 NOT_FOUND : Resource 권한이 없음 */
+    ACCESS_DENIED(403, "권한이 없습니다."),
+
     /* 404 NOT_FOUND : Resource 를 찾을 수 없음 */
     CAN_NOT_REPLY_POST_ERROR(404, "존재 하지 않는 게시글에 답글을 달 수 없습니다."),
     NOT_FOUND_POST_ERROR(404, "존재하지 않는 게시글 입니다."),
@@ -39,7 +44,6 @@ public enum ErrorCode {
     /* 500 INTERNAL_SERVER_ERROR : 서버 에러 */
     INTERNAL_SERVER_ERROR(500, "내부 서버 에러입니다.");
 
-
-    private final int httpStatus;
+	private final int httpStatus;
     private final String message;
 }
