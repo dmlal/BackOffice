@@ -63,11 +63,11 @@ public class User extends BaseEntity {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<PasswordHistory> passwordHistories = new ArrayList<>();
 
-    @OneToMany(mappedBy = "following")  // 팔로잉을 찾으면 follower를 불러온다
+    @OneToMany(mappedBy = "toUser")
     private List<Follow> followers = new ArrayList<>();//내 팔로워
 
-    @OneToMany(mappedBy = "follower")   // following
-    private List<Follow> followings = new ArrayList<>();//내가 팔로잉
+    @OneToMany(mappedBy = "fromUser")
+    private List<Follow> followings = new ArrayList<>();//내가 팔로잉한 유저
 
     public User updateProfile(ProfileUpdateRequestDto requestDto) {
         this.nickname = requestDto.getNickname();

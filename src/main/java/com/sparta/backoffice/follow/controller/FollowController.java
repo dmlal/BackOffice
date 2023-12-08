@@ -11,13 +11,11 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static com.sparta.backoffice.global.constant.ErrorCode.ALREADY_UNFOLLOW_USER;
 import static com.sparta.backoffice.global.constant.ResponseCode.*;
 
 @RestController
@@ -94,7 +92,7 @@ public class FollowController {
                 .body(BaseResponse.of(UNFOLLOW_USER,""));
     }
 
-    @Operation(summary = "팔로워리스트", description = "유저 팔로우리스트 API")
+    @Operation(summary = "팔로워리스트", description = "유저 팔로워리스트 API")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
@@ -111,8 +109,8 @@ public class FollowController {
     public ResponseEntity<BaseResponse<List<FollowUserResponseDto>>> getFollowerList(@PathVariable Long userId, @AuthUser User user) {
         List<FollowUserResponseDto> responseDto = followService.getFollowerList(userId, user);
         return ResponseEntity
-                .status(GET_FOLLOW_LIST.getHttpStatus())
-                .body(BaseResponse.of(GET_FOLLOW_LIST, responseDto));
+                .status(GET_FOLLOWER_LIST.getHttpStatus())
+                .body(BaseResponse.of(GET_FOLLOWER_LIST, responseDto));
     }
 
     @Operation(summary = "팔로잉 리스트", description = "유저 팔로잉 리스트 API")
@@ -134,7 +132,5 @@ public class FollowController {
         return ResponseEntity
                 .status(GET_FOLLOWING_LIST.getHttpStatus())
                 .body(BaseResponse.of(GET_FOLLOWING_LIST, responseDto));
-
     }
-
 }
