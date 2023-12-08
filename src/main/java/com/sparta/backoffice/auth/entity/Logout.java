@@ -2,6 +2,7 @@ package com.sparta.backoffice.auth.entity;
 
 import com.sparta.backoffice.global.entity.BaseEntity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
