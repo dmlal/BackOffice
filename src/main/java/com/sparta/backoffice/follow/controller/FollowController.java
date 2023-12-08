@@ -1,11 +1,8 @@
 package com.sparta.backoffice.follow.controller;
 
-import com.sparta.backoffice.follow.dto.FollowRequestDto;
-import com.sparta.backoffice.follow.dto.FollowResponseDto;
 import com.sparta.backoffice.follow.dto.FollowUserResponseDto;
 import com.sparta.backoffice.follow.service.FollowService;
 import com.sparta.backoffice.global.annotation.AuthUser;
-import com.sparta.backoffice.global.constant.ResponseCode;
 import com.sparta.backoffice.global.dto.BaseResponse;
 import com.sparta.backoffice.user.entity.User;
 import io.swagger.v3.oas.annotations.Operation;
