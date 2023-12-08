@@ -51,7 +51,10 @@ public class SecurityConfig {
                         .requestMatchers(PathRequest.toH2Console()).permitAll()
                         .requestMatchers(this.whiteListMapToMvcRequestMatchers(mvc)).permitAll() //허용 url 리스트
                         .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/api/read/**").permitAll()
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/api/posts/**").hasAnyRole("USER", "ADMIN")
+                        .requestMatchers("/api/users/**").hasAnyRole("USER", "ADMIN")
                         .anyRequest().authenticated()
         );
 
