@@ -61,7 +61,7 @@ public class UserController {
         ProfileUpdateResponseDto responseDto = userService.updateProfile(userId, requestDto, authUser);
 
         return ResponseEntity
-                .status(HttpStatus.OK)
+                .status(UPDATE_PROFILE.getHttpStatus())
                 .body(BaseResponse.of(UPDATE_PROFILE, responseDto));
     }
 
@@ -96,7 +96,7 @@ public class UserController {
         userService.updatePassword(userId, requestDto, authUser);
 
         return ResponseEntity
-                .status(HttpStatus.OK)
+                .status(UPDATE_PASSWORD.getHttpStatus())
                 .body(BaseResponse.of(UPDATE_PASSWORD, ""));
 
     }

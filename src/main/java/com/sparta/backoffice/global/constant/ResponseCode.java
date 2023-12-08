@@ -15,6 +15,8 @@ public enum ResponseCode {
     GET_ALL_USER(200, "모든 유저 조회 성공"),
     GET_LIKE_POSTS(200, "좋아요를 누른 게시글 목록 조회 성공"),
     GET_FOLLOWING_POSTS(200, "팔로잉중인 유저들의 게시글 목록 조회 성공"),
+    FOLLOW_USER(200, "유저 팔로우"),
+    UNFOLLOW_USER(200, "유저 언팔로우"),
 
 
     /* 201 CREATED : Resource 생성 완료 */
