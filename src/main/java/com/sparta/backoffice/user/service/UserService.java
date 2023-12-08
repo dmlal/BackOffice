@@ -141,7 +141,7 @@ public class UserService {
         if (user.getRole().equals(UserRoleEnum.ADMIN)) {
             throw new ApiException(NOT_ALLOW_ADMIN_BLOCK);
         } else if (user.getRole().equals(UserRoleEnum.USER)) {
-            throw new ApiException(NOT_BLOCKD_USER);
+            throw new ApiException(NOT_BLOCKED_USER);
         } else {
             user.unblock();
         }

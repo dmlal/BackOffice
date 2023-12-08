@@ -14,6 +14,7 @@ public enum ErrorCode {
     CAN_NOT_DELETE_ERROR(400, "작성자만 삭제할 수 있습니다."),
     CAN_NOT_CHANGE_NICKNAME(400, "닉네임을 변경할 수 없습니다."),
     RECENTLY_USED_PASSWORD(400, "최근 사용한 비밀번호입니다."),
+    CAN_NOT_FOLLOW_PRIVATE(400, "비공개 계정은 팔로우 할 수 없습니다."),
     CAN_NOT_FOLLOW_YOURSELF(400, "자기자신은 팔로우할 수 없습니다."),
     CAN_NOT_UNFOLLOW_YOURSELF(400, "자기자신은 언팔로우할 수 없습니다."),
     ALREADY_FOLLOW_USER(400, "이미 팔로우한 사용자입니다."),
@@ -22,7 +23,8 @@ public enum ErrorCode {
     NOT_EQUALS_ADMIN_TOKEN_ERROR(400, "관리자 암호가 틀려 등록이 불가능합니다."),
     NOT_ALLOW_ADMIN_DELETE(400, "관리자는 탈퇴 시킬 수 없습니다."),
     NOT_ALLOW_ADMIN_BLOCK(400, "관리자는 차단 시킬 수 없습니다."),
-    NOT_BLOCKD_USER(400, "차단한 적 없는 사용자입니다."),
+    NOT_BLOCKED_USER(400, "차단한 적 없는 사용자입니다."),
+    IS_PRIVATE_USER(400,"비공개 계정 입니다"),
 
     /* 401 UNAUTHORIZED  :  인증 되지 않음 */
     NOT_VALID_TOKEN(401, "토큰이 유효하지 않습니다"),
@@ -47,7 +49,8 @@ public enum ErrorCode {
     ALREADY_LIKED_ERROR(409, "이미 좋아요를 했습니다."),
 
     /* 500 INTERNAL_SERVER_ERROR : 서버 에러 */
-    INTERNAL_SERVER_ERROR(500, "내부 서버 에러입니다.");
+    INTERNAL_SERVER_ERROR(500, "내부 서버 에러입니다."),
+    ;
 
     private final int httpStatus;
     private final String message;

@@ -44,7 +44,7 @@ public class User extends BaseEntity {
     private String profileImageUrl;
 
     @Column(name = "is_private")
-    private Boolean isPrivate;
+    private Boolean isPrivate = false;
 
     @Column(name = "kakao_id")
     private Long kakaoId;
@@ -64,11 +64,10 @@ public class User extends BaseEntity {
     private List<PasswordHistory> passwordHistories = new ArrayList<>();
 
     @OneToMany(mappedBy = "following")  // 팔로잉을 찾으면 follower를 불러온다
-    private List<com.sparta.backoffice.follow.entity.Follow> followers = new ArrayList<>();
+    private List<Follow> followers = new ArrayList<>();//내 팔로워
 
     @OneToMany(mappedBy = "follower")   // following
-    private List<Follow> followings = new ArrayList<>();
-
+    private List<Follow> followings = new ArrayList<>();//내가 팔로잉
 
     public User updateProfile(ProfileUpdateRequestDto requestDto) {
         this.nickname = requestDto.getNickname();
@@ -89,12 +88,6 @@ public class User extends BaseEntity {
         this.username = username;
         this.password = password;
         this.role = role;
-    }
-
-    // 팔로우와 다대 1
-
-    public void addLike(Like like) {
-        likes.add(like);
     }
 
     public void block() {

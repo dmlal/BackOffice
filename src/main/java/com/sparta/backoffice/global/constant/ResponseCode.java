@@ -17,7 +17,7 @@ public enum ResponseCode {
     GET_FOLLOWING_POSTS(200, "팔로잉중인 유저들의 게시글 목록 조회 성공"),
     FOLLOW_USER(200, "유저 팔로우"),
     UNFOLLOW_USER(200, "유저 언팔로우"),
-    GET_FOLLOW_LIST(200, "팔로우 목록 보기"),
+    GET_FOLLOWER_LIST(200, "팔로워 목록 보기"),
     GET_FOLLOWING_LIST(200, "팔로잉 목록 보기"),
     MODIFIED_POST(200, "게시글 수정 성공"),
     UPDATE_PROFILE(200, "프로필 정보 변경 성공"),

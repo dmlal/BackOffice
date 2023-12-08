@@ -138,7 +138,7 @@ public class PostService {
         return posts.stream().map(PostResponseDto::new).toList();
     }
 
-    public PostDetailsResponseDto getPost(Long postId) {
+    public PostDetailsResponseDto getPost(Long postId, User loginuser) {
         Post post = postRepository.findByIdAndIsDeletedFalse(postId).orElseThrow(
                 () -> new ApiException(NOT_FOUND_POST_ERROR));
 
