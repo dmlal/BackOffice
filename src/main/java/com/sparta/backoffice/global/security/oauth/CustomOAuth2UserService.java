@@ -32,7 +32,6 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 		this.userRepository = userRepository;
 	}
 
-	@SneakyThrows
 	@Override
 	public OAuth2User loadUser(OAuth2UserRequest oauth2Userrequest) throws
 		OAuth2AuthenticationException {
