@@ -1,14 +1,8 @@
 package com.sparta.backoffice.user.dto;
 
-import com.sparta.backoffice.post.entity.Post;
 import com.sparta.backoffice.user.constant.UserRoleEnum;
-import com.sparta.backoffice.user.entity.PasswordHistory;
 import com.sparta.backoffice.user.entity.User;
-import jakarta.persistence.*;
 import lombok.Getter;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Getter
 public class UserInfoDto {
@@ -23,6 +17,8 @@ public class UserInfoDto {
     private String naverId;
     private Integer postCount;
     private UserRoleEnum role;
+    private Integer follower;
+    private Integer following;
 
     public UserInfoDto(User user) {
         this.id = user.getId();
@@ -36,5 +32,7 @@ public class UserInfoDto {
         this.naverId = user.getNaverId();
         this.postCount = user.getPostList().size();
         this.role = user.getRole();
+        this.follower = user.getFollowers().size();
+        this.following = user.getFollowings().size();
     }
 }

@@ -54,7 +54,7 @@ public class User extends BaseEntity {
     private String profileImageUrl;
 
     @Column(name = "is_private")
-    private Boolean isPrivate;
+    private Boolean isPrivate = false;
 
     @Setter
     @Column(name = "kakao_id")
@@ -69,14 +69,17 @@ public class User extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private UserRoleEnum role;
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
+    private List<Like> likes = new ArrayList<>();
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<PasswordHistory> passwordHistories = new ArrayList<>();
 
-    @OneToMany(mappedBy = "following")  // 팔로잉을 찾으면 follower를 불러온다
-    private List<Follow> followers = new ArrayList<>();
+    @OneToMany(mappedBy = "toUser")
+    private List<Follow> followers = new ArrayList<>();//내 팔로워
 
-    @OneToMany(mappedBy = "follower")   // following
-    private List<Follow> followings = new ArrayList<>();
+    @OneToMany(mappedBy = "fromUser")
+    private List<Follow> followings = new ArrayList<>();//내가 팔로잉한 유저
 
     public User updateProfile(ProfileUpdateRequestDto requestDto) {
         this.nickname = requestDto.getNickname();
@@ -99,14 +102,11 @@ public class User extends BaseEntity {
         this.role = role;
     }
 
-    // 좋아요와 1대다
-    @OneToMany(mappedBy = "user")
-    private List<Like> likes;
+    public void block() {
+        this.role = UserRoleEnum.BLOCK;
+    }
 
-
-    // 팔로우와 다대 1
-
-    public void addLike(Like like) {
-        likes.add(like);
+    public void unblock() {
+        this.role = UserRoleEnum.USER;
     }
 }
