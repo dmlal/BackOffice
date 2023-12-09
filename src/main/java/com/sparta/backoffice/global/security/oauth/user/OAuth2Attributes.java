@@ -12,10 +12,10 @@ import lombok.Getter;
 @Getter
 @Builder
 public class OAuth2Attributes {
-	Map<String, Object> attributes;
-	String id;
-	String name;
-	String email;
+	private Map<String, Object> attributes;
+	private String id;
+	private String name;
+	private String email;
 
 
 	public static OAuth2Attributes of(SocialType socialType, Map<String, Object> attributes) {
