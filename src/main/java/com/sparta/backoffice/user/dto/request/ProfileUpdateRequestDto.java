@@ -11,8 +11,6 @@ import java.io.File;
 @RequiredArgsConstructor
 public class ProfileUpdateRequestDto {
 
-//    private final String username;
-
     private final String nickname;
 
     private final String intro;
@@ -20,7 +18,4 @@ public class ProfileUpdateRequestDto {
     private final String link;
 
     private final Boolean isPrivate;
-
-//    private final String profileImageUrl;
-
 }

@@ -4,6 +4,7 @@ import com.sparta.backoffice.follow.dto.FollowUserResponseDto;
 import com.sparta.backoffice.follow.entity.Follow;
 import com.sparta.backoffice.follow.repository.FollowRepository;
 import com.sparta.backoffice.global.exception.ApiException;
+import com.sparta.backoffice.user.constant.UserRoleEnum;
 import com.sparta.backoffice.user.entity.User;
 import com.sparta.backoffice.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,10 +33,16 @@ public class FollowService {
             throw new ApiException(CAN_NOT_FOLLOW_YOURSELF);
         }
 
-        Optional<Follow> getFollow = followRepository.findByFollowerIdAndFollowingId(authUser.getId(), toFollowUser.getId());
+        Optional<Follow> getFollow = followRepository.findByFromUserAndToUser(authUser, toFollowUser);
 
         if (getFollow.isPresent()) {
             throw new ApiException(ALREADY_FOLLOW_USER);
+        }
+
+        if (!authUser.getRole().equals(UserRoleEnum.ADMIN)) {
+            if (toFollowUser.getIsPrivate()) {
+                throw new ApiException(CAN_NOT_FOLLOW_PRIVATE);
+            }
         }
 
         Follow follow = new Follow(authUser, toFollowUser);
@@ -50,32 +57,50 @@ public class FollowService {
             throw new ApiException(CAN_NOT_UNFOLLOW_YOURSELF);
         }
 
-        Optional<Follow> getUnfollow = followRepository.findByFollowerIdAndFollowingId(authUser.getId(), toUnfollowUser.getId());
+        Optional<Follow> getUnfollow = followRepository.findByFromUserAndToUser(authUser, toUnfollowUser);
 
         if (getUnfollow.isEmpty()) {
             throw new ApiException(ALREADY_UNFOLLOW_USER);
         }
+
         followRepository.delete(getUnfollow.get());
     }
 
-    public List<FollowUserResponseDto> getFollowerList(Long userId, User user) {
-        User getFollowListInfo = foundUser(userId);
+    public List<FollowUserResponseDto> getFollowerList(Long userId, User authUser) {
+        User findUser = foundUser(userId);//to일 떄(팔로우를 받는 사람)
 
-        List<Follow> followerList = followRepository.findAllByFollowingId(userId);
-        return followerList.stream().map(follow -> new FollowUserResponseDto(follow.getFollower())).toList();
+        validateFollowing(findUser, authUser);
+
+        return findUser.getFollowers().stream().map(
+                follow -> {
+                    return new FollowUserResponseDto(follow.getFromUser());
+                }).toList();
     }
 
-    public List<FollowUserResponseDto> getFollowingList(Long userId, User user) {
-        User getFollowListInfo = foundUser(userId);
+    public List<FollowUserResponseDto> getFollowingList(Long userId, User authUser) {
+        User findUser = foundUser(userId);//from일 떄(팔로우를 하는 사람)
 
-        List<Follow> followingList = followRepository.findAllByFollowerId(userId);
-        return followingList.stream().map(follow -> new FollowUserResponseDto(follow.getFollowing())).toList();
+        validateFollowing(findUser, authUser);
 
-
+        return findUser.getFollowings().stream().map(
+                follow -> {
+                    return new FollowUserResponseDto(follow.getToUser());
+                }).toList();
     }
 
     private User foundUser(Long userId) {
         return userRepository.findById(userId).orElseThrow(() ->
                 new ApiException(NOT_FOUND_USER_ERROR));
     }
+
+    void validateFollowing(User findUser, User authUser) {
+        if (!authUser.getRole().equals(UserRoleEnum.ADMIN)) {
+            if (findUser.getIsPrivate()) {
+                followRepository.findByFromUserAndToUser(authUser, findUser).orElseThrow(
+                        () -> new ApiException(IS_PRIVATE_USER)
+                );
+            }
+        }
+    }
+
 }
