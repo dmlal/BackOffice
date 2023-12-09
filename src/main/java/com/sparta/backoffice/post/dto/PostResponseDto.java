@@ -1,5 +1,6 @@
 package com.sparta.backoffice.post.dto;
 
+import com.sparta.backoffice.global.dto.BaseResponse;
 import com.sparta.backoffice.post.entity.Post;
 import com.sparta.backoffice.user.constant.UserRoleEnum;
 import com.sparta.backoffice.user.dto.UserSimpleDto;
@@ -34,11 +35,7 @@ public class PostResponseDto {
         if (post.getParentPost() != null)
             this.parentPostId = post.getParentPost().getId();
         this.isPrivate = post.getUser().getIsPrivate();
-        if (!isDeleted && isPrivate) {
-            this.content = "이 계정 소유자가 게시물을 볼 수 있는 사용자를 제한 하고 있어 이 게시물은 볼 수 없습니다.";
-        } else {
-            this.content = post.getContent();
-        }
+        this.content = post.getContent();
     }
 
     public PostResponseDto(Post post, User loginUser, List<Long> followingIdList) {
