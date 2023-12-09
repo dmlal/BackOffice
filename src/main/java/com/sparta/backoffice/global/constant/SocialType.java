@@ -14,5 +14,4 @@ public enum SocialType {
 		this.ko = ko;
 		this.code = code;
 	}
-
-	}
+}
