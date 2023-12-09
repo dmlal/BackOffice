@@ -141,15 +141,13 @@ public class PostService {
         );
 
         //찾는 유저가 내가 아닌 비공개 계정일 때
-        if (!loginUser.getRole().equals(UserRoleEnum.ADMIN)) {
-            if (!finduser.equals(loginUser) && finduser.getIsPrivate()) {
-                //비회원 일 때
-                if (loginUser == null) {
+        if (!finduser.equals(loginUser) && finduser.getIsPrivate()) {
+            //비회원 일 때
+            if (loginUser == null) {
+                throw new ApiException(IS_PRIVATE_USER);
+            } else if (!loginUser.getRole().equals(UserRoleEnum.ADMIN)) {
+                if (!validateFollowing(finduser, loginUser)) {
                     throw new ApiException(IS_PRIVATE_USER);
-                } else if (!loginUser.getRole().equals(UserRoleEnum.ADMIN)) {
-                    if (!validateFollowing(finduser, loginUser)) {
-                        throw new ApiException(IS_PRIVATE_USER);
-                    }
                 }
             }
         }
