@@ -46,11 +46,13 @@ public class User extends BaseEntity {
     @Column(name = "is_private")
     private Boolean isPrivate;
 
+    @Setter
     @Column(name = "kakao_id")
-    private Long kakaoId;
+    private String kakaoId;
 
+    @Setter
     @Column(name = "naver_id")
-    private Long naverId;
+    private String naverId;
 
     @OneToMany(mappedBy = "user")
     private List<Post> postList;
@@ -87,7 +89,7 @@ public class User extends BaseEntity {
         this.role = role;
     }
 
-//    public List<User> getFollowerListAll() {
+    //    public List<User> getFollowerListAll() {
 //        this.followerList.stream().map(follow -> follow.getFollower()).toList();
 //    }   팔로우서비스보다 이게 더 낫다.  JPQL만 잘쓴다면..
 

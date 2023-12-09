@@ -19,8 +19,8 @@ public class UserInfoDto {
     private String link;
     private String profileImageUrl;
     private Boolean isPrivate;
-    private Long kakaoId;
-    private Long naverId;
+    private String kakaoId;
+    private String naverId;
     private Integer postCount;
     private UserRoleEnum role;
 
