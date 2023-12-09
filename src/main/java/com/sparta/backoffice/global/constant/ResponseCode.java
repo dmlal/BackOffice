@@ -25,6 +25,7 @@ public enum ResponseCode {
     DELETED_POST(200, "게시글 삭제 성공"),
     DELETED_LIKE(200, "좋아요 취소 성공"),
     LOGOUT(200, "로그아웃 성공"),
+    UPDATE_PROFILE_IMAGE(200, "프로필 이미지 변경 완료"),
 
     /* 201 CREATED : Resource 생성 완료 */
     SIGNUP(201, "회원가입 성공"),

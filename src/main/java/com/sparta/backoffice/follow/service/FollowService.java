@@ -61,16 +61,17 @@ public class FollowService {
     public List<FollowUserResponseDto> getFollowerList(Long userId, User user) {
         User getFollowListInfo = foundUser(userId);
 
-        List<Follow> followingList = followRepository.findAllByFollowerId(userId);
-        return followingList.stream().map(follow -> new FollowUserResponseDto(follow.getFollowing())).toList();
-
+        List<Follow> followerList = followRepository.findAllByFollowingId(userId);
+        return followerList.stream().map(follow -> new FollowUserResponseDto(follow.getFollower())).toList();
     }
 
     public List<FollowUserResponseDto> getFollowingList(Long userId, User user) {
         User getFollowListInfo = foundUser(userId);
 
-        List<Follow> followerList = followRepository.findAllByFollowingId(userId);
-        return followerList.stream().map(follow -> new FollowUserResponseDto(follow.getFollowing())).toList();
+        List<Follow> followingList = followRepository.findAllByFollowerId(userId);
+        return followingList.stream().map(follow -> new FollowUserResponseDto(follow.getFollowing())).toList();
+
+
     }
 
     private User foundUser(Long userId) {

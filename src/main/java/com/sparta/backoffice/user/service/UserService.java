@@ -77,12 +77,12 @@ public class UserService {
         passwordHistoryRepository.save(updatedPasswordHistory);
     }
 
-    private User foundUser(Long userId) {
+    public User foundUser(Long userId) {
         return userRepository.findById(userId).orElseThrow(() ->
                 new ApiException(NOT_FOUND_USER_ERROR));
     }
 
-    private void checkUserPermission(User user, User authUser) {
+    public void checkUserPermission(User user, User authUser) {
         if (!user.getUsername().equals(authUser.getUsername())) {
             throw new ApiException(DENIED_AUTHORITY);
         }
@@ -98,4 +98,5 @@ public class UserService {
 
         return users.stream().map(UserInfoDto::new).toList();
     }
+
 }
