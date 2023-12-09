@@ -1,10 +1,7 @@
 package com.sparta.backoffice.global.config;
 
-import com.sparta.backoffice.auth.repository.LogoutRepository;
-import com.sparta.backoffice.global.security.CustomUserDetailService;
-import com.sparta.backoffice.global.security.JwtAuthorizationFilter;
-import com.sparta.backoffice.global.util.JwtProvider;
-import lombok.RequiredArgsConstructor;
+import java.util.stream.Stream;
+
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,14 +10,23 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher;
 import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 
-import java.util.stream.Stream;
+import com.sparta.backoffice.auth.repository.LogoutRepository;
+import com.sparta.backoffice.global.security.CustomAuthenticationEntryPoint;
+import com.sparta.backoffice.global.security.oauth.CustomOAuth2UserService;
+import com.sparta.backoffice.global.security.CustomUserDetailService;
+import com.sparta.backoffice.global.security.JwtAuthorizationFilter;
+import com.sparta.backoffice.global.security.oauth.OAuth2AuthenticationFailureHandler;
+import com.sparta.backoffice.global.security.oauth.OAuth2AuthenticationSuccessHandler;
+import com.sparta.backoffice.global.util.JwtProvider;
+import com.sparta.backoffice.user.repository.UserRepository;
+
+import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @EnableWebSecurity
@@ -29,9 +35,13 @@ import java.util.stream.Stream;
 public class SecurityConfig {
     private final JwtProvider jwtProvider;
     private final AccessDeniedHandler customAccessDeniedHandler;
-    private final AuthenticationEntryPoint customAuthenticationEntryPoint;
+    private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
+    private final OAuth2AuthenticationSuccessHandler oauth2SuccessHandler;
+    private final OAuth2AuthenticationFailureHandler oauth2AuthenticationFailureHandler;
+    private final CustomOAuth2UserService oAuth2UserService;
     private final CustomUserDetailService userDetailService;
     private final LogoutRepository logoutRepository;
+    private final UserRepository userRepository;
 
 
     @Bean
@@ -44,13 +54,22 @@ public class SecurityConfig {
         http.sessionManagement(sessionManagement ->
                 sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
+        http.httpBasic(AbstractHttpConfigurer::disable);
+
+        http
+            .oauth2Login(oauth2 -> oauth2
+                .authorizationEndpoint(endpointConfig -> endpointConfig.baseUri("/api/auth/login"))
+                .userInfoEndpoint(userInfoEndpointConfig -> userInfoEndpointConfig.userService(oAuth2UserService))
+                .successHandler(oauth2SuccessHandler)
+                .failureHandler(oauth2AuthenticationFailureHandler)
+            );
         //url permit
         http.authorizeHttpRequests(auth ->
                 auth
                         .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
                         .requestMatchers(PathRequest.toH2Console()).permitAll()
                         .requestMatchers(this.whiteListMapToMvcRequestMatchers(mvc)).permitAll() //허용 url 리스트
-                        .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/api/auth/**", "/**").permitAll()
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
         );
@@ -70,6 +89,11 @@ public class SecurityConfig {
     @Bean
     public MvcRequestMatcher.Builder mvcRequestMatcherBuilder(HandlerMappingIntrospector introspector) {
         return new MvcRequestMatcher.Builder(introspector);
+    }
+
+    @Bean
+    public CustomOAuth2UserService oAuth2UserService() {
+        return new CustomOAuth2UserService(userRepository);
     }
 
     @Bean
