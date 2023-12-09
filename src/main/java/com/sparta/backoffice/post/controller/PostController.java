@@ -32,6 +32,7 @@ public class PostController {
     @Operation(summary = "게시글 작성 API", description = "사용자가 게시글을 작성하거나 다른 게시글에 답글을 작성합니다.")
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "게시글 작성 성공", content = @Content(schema = @Schema(implementation = BaseResponse.class))),
+            @ApiResponse(responseCode = "403", description = "권한 없음", content = @Content(schema = @Schema(implementation = BaseResponse.class))),
             @ApiResponse(responseCode = "403", description = "내가 팔로잉하지 않은 비공개 게시물에는 답글 작성", content = @Content(schema = @Schema(implementation = BaseResponse.class))),
             @ApiResponse(responseCode = "404", description = "존재하지 않는 게시글에 답글 작성", content = @Content(schema = @Schema(implementation = BaseResponse.class))),
             @ApiResponse(responseCode = "400", description = "내용이 공백이거나 140자 초과일 때", content = @Content(schema = @Schema(implementation = BaseResponse.class)))
@@ -47,8 +48,10 @@ public class PostController {
             parameters = {@Parameter(name = "postId", description = "수정할 게시글 번호", in = ParameterIn.PATH)})
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "게시글 수정 성공", content = @Content(schema = @Schema(implementation = BaseResponse.class))),
+            @ApiResponse(responseCode = "403", description = "권한 없음", content = @Content(schema = @Schema(implementation = BaseResponse.class))),
             @ApiResponse(responseCode = "404", description = "존재하지 않는 게시글 수정", content = @Content(schema = @Schema(implementation = BaseResponse.class))),
-            @ApiResponse(responseCode = "400", description = "작성자가 아닌 사용자가 수정", content = @Content(schema = @Schema(implementation = BaseResponse.class)))
+            @ApiResponse(responseCode = "400", description = "작성자가 아닌 사용자가 수정", content = @Content(schema = @Schema(implementation = BaseResponse.class))),
+            @ApiResponse(responseCode = "400", description = "내용이 공백이거나 140자 초과일 때", content = @Content(schema = @Schema(implementation = BaseResponse.class)))
     })
     @PutMapping("/{postId}")
     public ResponseEntity<BaseResponse<PostResponseDto>> updatePost(@PathVariable Long postId, @RequestBody @Valid PostRequestDto requestDto, @AuthUser User user) {
@@ -62,6 +65,7 @@ public class PostController {
     )
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "게시글 삭제 성공", content = @Content(schema = @Schema(implementation = BaseResponse.class))),
+            @ApiResponse(responseCode = "403", description = "권한 없음", content = @Content(schema = @Schema(implementation = BaseResponse.class))),
             @ApiResponse(responseCode = "404", description = "존재하지 않는 게시글 삭제", content = @Content(schema = @Schema(implementation = BaseResponse.class))),
             @ApiResponse(responseCode = "400", description = "작성자가 아닌 사용자가 삭제", content = @Content(schema = @Schema(implementation = BaseResponse.class)))
     })
