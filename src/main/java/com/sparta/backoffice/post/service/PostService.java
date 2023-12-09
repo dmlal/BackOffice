@@ -1,5 +1,6 @@
 package com.sparta.backoffice.post.service;
 
+import com.sparta.backoffice.follow.entity.Follow;
 import com.sparta.backoffice.global.exception.ApiException;
 import com.sparta.backoffice.post.dto.PostDetailsResponseDto;
 import com.sparta.backoffice.post.dto.PostRequestDto;
@@ -18,9 +19,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
 import java.util.ArrayList;
+import java.util.List;
 
 import static com.sparta.backoffice.global.constant.ErrorCode.*;
 
@@ -34,11 +34,23 @@ public class PostService {
 
     public PostResponseDto createPost(PostRequestDto requestDto, User user) {
         Post post;
+        User loginUser = userRepository.findById(user.getId()).orElseThrow(
+                () -> new ApiException(NOT_FOUND_USER_ERROR)
+        );
 
         if (requestDto.getParentPostId() != null) {
             //부모가 존재
             Post parentPost = postRepository.findByIdAndIsDeletedFalse(requestDto.getParentPostId()).orElseThrow(
                     () -> new ApiException(CAN_NOT_REPLY_POST_ERROR));
+
+            // 본인이 아닌 다른 사람의 비공개 계정이 쓴 글에 답글 달 수 없음
+            if (!user.getRole().equals(UserRoleEnum.ADMIN)) {
+                if (!parentPost.getUser().equals(loginUser) && parentPost.getUser().getIsPrivate()) {
+                    if (!validateFollowing(parentPost.getUser(), user)) {
+                        throw new ApiException(CAN_NOT_REPLY_PRIVATE_POST_ERROR);
+                    }
+                }
+            }
 
             post = new Post(requestDto, parentPost, user);
 
@@ -121,23 +133,39 @@ public class PostService {
         return true;
     }
 
-
+    //유저별 게시글 조회
     @Transactional(readOnly = true)
-    public List<PostResponseDto> getPostsByUser(Long userId, Integer cursor, Integer size, String dir) {
-        User user = userRepository.findById(userId).orElseThrow(
+    public List<PostResponseDto> getPostsByUser(Long userId, Integer cursor, Integer size, String dir, User loginUser) {
+        User finduser = userRepository.findById(userId).orElseThrow(
                 () -> new ApiException(NOT_FOUND_USER_ERROR)
         );
+
+        //찾는 유저가 내가 아닌 비공개 계정일 때
+        if (!loginUser.getRole().equals(UserRoleEnum.ADMIN)) {
+            if (!finduser.equals(loginUser) && finduser.getIsPrivate()) {
+                //비회원 일 때
+                if (loginUser == null) {
+                    throw new ApiException(IS_PRIVATE_USER);
+                } else if (!loginUser.getRole().equals(UserRoleEnum.ADMIN)) {
+                    if (!validateFollowing(finduser, loginUser)) {
+                        throw new ApiException(IS_PRIVATE_USER);
+                    }
+                }
+            }
+        }
+
 
         Sort sort = Sort.by(dir.equalsIgnoreCase("desc") ?
                 Sort.Direction.DESC : Sort.Direction.ASC, "createdAt");
 
         Pageable pageable = PageRequest.of(cursor, size, sort);
 
-        Page<Post> posts = postRepository.findByUserAndParentPostIsNullAndIsDeletedFalse(user, pageable);
+        Page<Post> posts = postRepository.findByUserAndParentPostIsNullAndIsDeletedFalse(finduser, pageable);
 
         return posts.stream().map(PostResponseDto::new).toList();
     }
 
+    //게시글 상세조회
     public PostDetailsResponseDto getPost(Long postId, User loginuser) {
         Post post = postRepository.findByIdAndIsDeletedFalse(postId).orElseThrow(
                 () -> new ApiException(NOT_FOUND_POST_ERROR));
@@ -150,11 +178,26 @@ public class PostService {
             Long userId,
             Integer cursor,
             Integer size,
-            String direction
-    ) {
-        if (!userRepository.existsById(userId)) {
-            throw new ApiException(NOT_FOUND_USER_ERROR);
+            String direction,
+            User loginUser) {
+        User finduser = userRepository.findById(userId).orElseThrow(
+                () -> new ApiException(NOT_FOUND_USER_ERROR)
+        );
+
+        //찾는 유저가 내가 아닌 비공개 계정일 때
+        if (!loginUser.getRole().equals(UserRoleEnum.ADMIN)) {
+            if (!finduser.equals(loginUser) && finduser.getIsPrivate()) {
+                //비회원 일 때
+                if (loginUser == null) {
+                    throw new ApiException(IS_PRIVATE_USER);
+                } else if (!loginUser.getRole().equals(UserRoleEnum.ADMIN)) {
+                    if (!validateFollowing(finduser, loginUser)) {
+                        throw new ApiException(IS_PRIVATE_USER);
+                    }
+                }
+            }
         }
+
 
         Sort sort = Sort.by(direction.equalsIgnoreCase("desc") ?
                 Sort.Direction.DESC : Sort.Direction.ASC, "createdAt");
@@ -181,5 +224,25 @@ public class PostService {
 
         return posts.stream()
                 .map(PostResponseDto::new).toList();
+    }
+
+    boolean validateFollowing(User findUser, User authUser) {
+        User loginUser = userRepository.findById(authUser.getId()).orElseThrow(
+                () -> new ApiException(NOT_FOUND_USER_ERROR)
+        );
+        if (findUser.getIsPrivate() && !findFollowing(findUser, loginUser)) {
+            return false;
+        }
+        return true;
+    }
+
+    boolean findFollowing(User findUser, User loginUser) {
+        List<Follow> follows = loginUser.getFollowings();
+        for (Follow follow : follows) {
+            if (follow.getToUser().equals(findUser)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

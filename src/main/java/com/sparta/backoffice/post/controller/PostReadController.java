@@ -36,9 +36,10 @@ public class PostReadController {
         @PathVariable Long userId,
         @RequestParam Integer cursor,
         @RequestParam Integer size,
-        @RequestParam String dir
+        @RequestParam String dir,
+        @AuthUser User loginUser
     ) {
-        List<PostResponseDto> postsByUser = postService.getPostsByUser(userId, cursor, size, dir);
+        List<PostResponseDto> postsByUser = postService.getPostsByUser(userId, cursor, size, dir,loginUser);
 
         return ResponseEntity.status(HttpStatus.OK)
             .body(BaseResponse.of(
@@ -53,9 +54,10 @@ public class PostReadController {
         @PathVariable Long userId,
         @RequestParam Integer cursor,
         @RequestParam Integer size,
-        @RequestParam String dir
+        @RequestParam String dir,
+        @AuthUser User loginUser
     ) {
-        List<PostResponseDto> userLikedPosts = postService.getUserLikedPosts(userId, cursor, size, dir);
+        List<PostResponseDto> userLikedPosts = postService.getUserLikedPosts(userId, cursor, size, dir,loginUser);
         return ResponseEntity.status(HttpStatus.OK)
             .body(BaseResponse.of(GET_LIKE_POSTS, userLikedPosts));
     }

@@ -24,7 +24,6 @@ public class ChildPostResponseDto {
 
     public ChildPostResponseDto(Post post) {
         this.id = post.getId();
-        this.content = post.getContent();
         this.createdAt = post.getCreatedAt();
         this.modifiedAt = post.getModifiedAt();
         this.replyCount = post.getChildPosts().size();
@@ -36,5 +35,10 @@ public class ChildPostResponseDto {
         this.likesCount = post.getLikes().size();
         this.isDeleted = post.isDeleted();
         this.childs = post.getChildPosts().stream().map(ChildPostResponseDto::new).toList();
+        if (!isDeleted && isPrivate) {
+            this.content = "이 계정 소유자가 게시물을 볼 수 있는 사용자를 제한 하고 있어 이 게시물은 볼 수 없습니다.";
+        } else {
+            this.content = post.getContent();
+        }
     }
 }

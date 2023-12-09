@@ -24,19 +24,18 @@ public enum ErrorCode {
     NOT_ALLOW_ADMIN_DELETE(400, "관리자는 탈퇴 시킬 수 없습니다."),
     NOT_ALLOW_ADMIN_BLOCK(400, "관리자는 차단 시킬 수 없습니다."),
     NOT_BLOCKED_USER(400, "차단한 적 없는 사용자입니다."),
-    IS_PRIVATE_USER(400,"비공개 계정 입니다"),
+    IS_PRIVATE_USER(400, "비공개 계정 입니다"),
 
     /* 401 UNAUTHORIZED  :  인증 되지 않음 */
     NOT_VALID_TOKEN(401, "토큰이 유효하지 않습니다"),
     /* 403 FORBIDDEN  :  권한 없음 */
     DENIED_AUTHORITY(403, "권한이 없습니다."),
     SELF_LIKE_ERROR(400, "자신의 게시글은 좋아요 할 수 없습니다."),
+    CAN_NOT_REPLY_PRIVATE_POST_ERROR(403, "내가 팔로잉하지 않은 비공개 게시물에는 답글을 달 수 없습니다."),
 
     /* 404 UN_AUTHORIZED : 인증 불가 */
     UNAUTHORIZED(401, "인증 정보가 유효하지 않습니다."),
 
-    /* 404 NOT_FOUND : Resource 권한이 없음 */
-    ACCESS_DENIED(403, "권한이 없습니다."),
 
     /* 404 NOT_FOUND : Resource 를 찾을 수 없음 */
     CAN_NOT_REPLY_POST_ERROR(404, "존재 하지 않는 게시글에 답글을 달 수 없습니다."),
