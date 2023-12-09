@@ -1,6 +1,8 @@
 package com.sparta.backoffice.post.service;
 
 import com.sparta.backoffice.follow.entity.Follow;
+import com.sparta.backoffice.follow.repository.FollowRepository;
+import com.sparta.backoffice.global.constant.ErrorCode;
 import com.sparta.backoffice.global.exception.ApiException;
 import com.sparta.backoffice.post.dto.PostDetailsResponseDto;
 import com.sparta.backoffice.post.dto.PostRequestDto;
@@ -31,12 +33,10 @@ public class PostService {
 
     private final PostRepository postRepository;
     private final UserRepository userRepository;
+    private final FollowRepository followRepository;
 
     public PostResponseDto createPost(PostRequestDto requestDto, User user) {
         Post post;
-        User loginUser = userRepository.findById(user.getId()).orElseThrow(
-                () -> new ApiException(NOT_FOUND_USER_ERROR)
-        );
 
         if (requestDto.getParentPostId() != null) {
             //부모가 존재
@@ -45,10 +45,8 @@ public class PostService {
 
             // 본인이 아닌 다른 사람의 비공개 계정이 쓴 글에 답글 달 수 없음
             if (!user.getRole().equals(UserRoleEnum.ADMIN)) {
-                if (!parentPost.getUser().equals(loginUser) && parentPost.getUser().getIsPrivate()) {
-                    if (!validateFollowing(parentPost.getUser(), user)) {
-                        throw new ApiException(CAN_NOT_REPLY_PRIVATE_POST_ERROR);
-                    }
+                if (!parentPost.getUser().equals(user) && parentPost.getUser().getIsPrivate()) {
+                    validateFollowing(parentPost.getUser(), user, CAN_NOT_REPLY_PRIVATE_POST_ERROR);
                 }
             }
 
@@ -146,9 +144,7 @@ public class PostService {
             if (loginUser == null) {
                 throw new ApiException(IS_PRIVATE_USER);
             } else if (!loginUser.getRole().equals(UserRoleEnum.ADMIN)) {
-                if (!validateFollowing(finduser, loginUser)) {
-                    throw new ApiException(IS_PRIVATE_USER);
-                }
+                validateFollowing(finduser, loginUser, IS_PRIVATE_USER);
             }
         }
 
@@ -203,9 +199,7 @@ public class PostService {
                 if (loginUser == null) {
                     throw new ApiException(IS_PRIVATE_USER);
                 } else if (!loginUser.getRole().equals(UserRoleEnum.ADMIN)) {
-                    if (!validateFollowing(finduser, loginUser)) {
-                        throw new ApiException(IS_PRIVATE_USER);
-                    }
+                    validateFollowing(finduser, loginUser, IS_PRIVATE_USER);
                 }
             }
         }
@@ -238,23 +232,14 @@ public class PostService {
                 .map(post -> new PostResponseDto(post)).toList();
     }
 
-    boolean validateFollowing(User findUser, User authUser) {
-        User loginUser = userRepository.findById(authUser.getId()).orElseThrow(
-                () -> new ApiException(NOT_FOUND_USER_ERROR)
-        );
-        if (findUser.getIsPrivate() && !findFollowing(findUser, loginUser)) {
-            return false;
+    void validateFollowing(User findUser, User authUser, ErrorCode errorCode) {
+        if (findUser.getIsPrivate()) {
+            followRepository.findByFromUserAndToUser(authUser, findUser).orElseThrow(
+                    () -> new ApiException(errorCode)
+            );
         }
-        return true;
-    }
-
-    boolean findFollowing(User findUser, User loginUser) {
-        List<Follow> follows = loginUser.getFollowings();
-        for (Follow follow : follows) {
-            if (follow.getToUser().equals(findUser)) {
-                return true;
-            }
-        }
-        return false;
     }
 }
+
+
+

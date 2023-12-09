@@ -1,6 +1,6 @@
 package com.sparta.backoffice.like.service;
 
-import com.sparta.backoffice.follow.entity.Follow;
+import com.sparta.backoffice.follow.repository.FollowRepository;
 import com.sparta.backoffice.global.constant.ErrorCode;
 import com.sparta.backoffice.global.exception.ApiException;
 import com.sparta.backoffice.like.entity.Like;
@@ -22,7 +22,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Objects;
 
-import static com.sparta.backoffice.global.constant.ErrorCode.*;
+import static com.sparta.backoffice.global.constant.ErrorCode.CAN_NOT_LIKE_PRIVATE_POST_ERROR;
+import static com.sparta.backoffice.global.constant.ErrorCode.NOT_FOUND_POST_ERROR;
 
 @Service
 @RequiredArgsConstructor
@@ -30,7 +31,7 @@ public class LikeService {
 
     private final LikeRepository likeRepository;
     private final PostRepository postRepository;
-    private final PostRepository userRepository;
+    private final FollowRepository followRepository;
 
     @Transactional
     public void like(User user, Long postId) {
@@ -48,9 +49,7 @@ public class LikeService {
         // 본인이 아닌 다른 사람의 비공개 계정이 쓴 글에 좋아요 달 수 없음
         if (!user.getRole().equals(UserRoleEnum.ADMIN)) {
             if (!post.getUser().equals(user) && post.getUser().getIsPrivate()) {
-                if (!validateFollowing(post.getUser(), user)) {
-                    throw new ApiException(CAN_NOT_LIKE_PRIVATE_POST_ERROR);
-                }
+                validateFollowing(post.getUser(), user);
             }
         }
 
@@ -93,23 +92,11 @@ public class LikeService {
         return likedUsers;
     }
 
-    boolean validateFollowing(User findUser, User authUser) {
-        User loginUser = userRepository.findById(authUser.getId()).orElseThrow(
-                () -> new ApiException(NOT_FOUND_USER_ERROR)
-        ).getUser();
-        if (findUser.getIsPrivate() && !findFollowing(findUser, loginUser)) {
-            return false;
+    void validateFollowing(User findUser, User authUser) {
+        if (findUser.getIsPrivate()) {
+            followRepository.findByFromUserAndToUser(authUser, findUser).orElseThrow(
+                    () -> new ApiException(CAN_NOT_LIKE_PRIVATE_POST_ERROR)
+            );
         }
-        return true;
-    }
-
-    boolean findFollowing(User findUser, User loginUser) {
-        List<Follow> follows = loginUser.getFollowings();
-        for (Follow follow : follows) {
-            if (follow.getToUser().equals(findUser)) {
-                return true;
-            }
-        }
-        return false;
     }
 }

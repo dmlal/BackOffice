@@ -39,7 +39,11 @@ public class FollowService {
             throw new ApiException(ALREADY_FOLLOW_USER);
         }
 
-        validateFollowing(toFollowUser, authUser);
+        if (!authUser.getRole().equals(UserRoleEnum.ADMIN)) {
+            if (toFollowUser.getIsPrivate()) {
+                throw new ApiException(CAN_NOT_FOLLOW_PRIVATE);
+            }
+        }
 
         Follow follow = new Follow(authUser, toFollowUser);
         followRepository.save(follow);
@@ -90,25 +94,13 @@ public class FollowService {
     }
 
     void validateFollowing(User findUser, User authUser) {
-        User loginUser = userRepository.findById(authUser.getId()).orElseThrow(
-                () -> new ApiException(NOT_FOUND_USER_ERROR)
-        );
-
-        if (!loginUser.getRole().equals(UserRoleEnum.ADMIN)) {
-            if (findUser.getIsPrivate() && !findFollowing(findUser, loginUser)) {
-                throw new ApiException(IS_PRIVATE_USER);
+        if (!authUser.getRole().equals(UserRoleEnum.ADMIN)) {
+            if (findUser.getIsPrivate()) {
+                followRepository.findByFromUserAndToUser(authUser, findUser).orElseThrow(
+                        () -> new ApiException(IS_PRIVATE_USER)
+                );
             }
         }
-    }
-
-    boolean findFollowing(User findUser, User loginUser) {
-        List<Follow> follows = loginUser.getFollowings();
-        for (Follow follow : follows) {
-            if (follow.getToUser().equals(findUser)) {
-                return true;
-            }
-        }
-        return false;
     }
 
 }
