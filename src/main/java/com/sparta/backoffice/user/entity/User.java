@@ -54,9 +54,9 @@ public class User extends BaseEntity {
 
     @OneToMany(mappedBy = "user")
     private List<Post> postList;
+
     @Enumerated(EnumType.STRING)
     private UserRoleEnum role;
-
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<PasswordHistory> passwordHistories = new ArrayList<>();
 
@@ -65,6 +65,10 @@ public class User extends BaseEntity {
 
     @OneToMany(mappedBy = "follower")   // following
     private List<Follow> followings = new ArrayList<>();
+
+    public void setProfileImageUrl(String profileImageUrl) {
+        this.profileImageUrl = profileImageUrl;
+    }
 
     public User updateProfile(ProfileUpdateRequestDto requestDto) {
         this.nickname = requestDto.getNickname();
