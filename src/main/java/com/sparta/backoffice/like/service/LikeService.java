@@ -1,11 +1,13 @@
 package com.sparta.backoffice.like.service;
 
+import com.sparta.backoffice.follow.entity.Follow;
 import com.sparta.backoffice.global.constant.ErrorCode;
 import com.sparta.backoffice.global.exception.ApiException;
 import com.sparta.backoffice.like.entity.Like;
 import com.sparta.backoffice.like.repository.LikeRepository;
 import com.sparta.backoffice.post.entity.Post;
 import com.sparta.backoffice.post.repository.PostRepository;
+import com.sparta.backoffice.user.constant.UserRoleEnum;
 import com.sparta.backoffice.user.dto.UserSimpleDto;
 import com.sparta.backoffice.user.entity.User;
 import lombok.RequiredArgsConstructor;
@@ -20,8 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Objects;
 
-import static com.sparta.backoffice.global.constant.ErrorCode.NOT_FOUND_POST_ERROR;
-import static com.sparta.backoffice.global.constant.ErrorCode.NOT_FOUND_USER_ERROR;
+import static com.sparta.backoffice.global.constant.ErrorCode.*;
 
 @Service
 @RequiredArgsConstructor
@@ -29,6 +30,7 @@ public class LikeService {
 
     private final LikeRepository likeRepository;
     private final PostRepository postRepository;
+    private final PostRepository userRepository;
 
     @Transactional
     public void like(User user, Long postId) {
@@ -42,6 +44,16 @@ public class LikeService {
         if (likeRepository.existsLikeByUserIdAndPostId(user.getId(), postId)) {
             throw new ApiException(ErrorCode.ALREADY_LIKED_ERROR);
         }
+
+        // 본인이 아닌 다른 사람의 비공개 계정이 쓴 글에 좋아요 달 수 없음
+        if (!user.getRole().equals(UserRoleEnum.ADMIN)) {
+            if (!post.getUser().equals(user) && post.getUser().getIsPrivate()) {
+                if (!validateFollowing(post.getUser(), user)) {
+                    throw new ApiException(CAN_NOT_LIKE_PRIVATE_POST_ERROR);
+                }
+            }
+        }
+
 
         Like like = new Like(user, post);
         likeRepository.save(like);
@@ -79,5 +91,25 @@ public class LikeService {
         }).toList();
 
         return likedUsers;
+    }
+
+    boolean validateFollowing(User findUser, User authUser) {
+        User loginUser = userRepository.findById(authUser.getId()).orElseThrow(
+                () -> new ApiException(NOT_FOUND_USER_ERROR)
+        ).getUser();
+        if (findUser.getIsPrivate() && !findFollowing(findUser, loginUser)) {
+            return false;
+        }
+        return true;
+    }
+
+    boolean findFollowing(User findUser, User loginUser) {
+        List<Follow> follows = loginUser.getFollowings();
+        for (Follow follow : follows) {
+            if (follow.getToUser().equals(findUser)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

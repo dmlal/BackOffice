@@ -32,6 +32,7 @@ public enum ErrorCode {
     DENIED_AUTHORITY(403, "권한이 없습니다."),
     SELF_LIKE_ERROR(400, "자신의 게시글은 좋아요 할 수 없습니다."),
     CAN_NOT_REPLY_PRIVATE_POST_ERROR(403, "내가 팔로잉하지 않은 비공개 게시물에는 답글을 달 수 없습니다."),
+    CAN_NOT_LIKE_PRIVATE_POST_ERROR(403, "내가 팔로잉하지 않은 비공개 게시물에는 좋아요를 할 수 없습니다."),
 
     /* 404 UN_AUTHORIZED : 인증 불가 */
     UNAUTHORIZED(401, "인증 정보가 유효하지 않습니다."),
