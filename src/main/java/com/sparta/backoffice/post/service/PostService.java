@@ -162,16 +162,30 @@ public class PostService {
 
         Page<Post> posts = postRepository.findByUserAndParentPostIsNullAndIsDeletedFalse(finduser, pageable);
 
-        return posts.stream().map(PostResponseDto::new).toList();
+        return posts.stream().map(post -> new PostResponseDto(post)).toList();
     }
 
     //게시글 상세조회
     public PostDetailsResponseDto getPost(Long postId, User loginuser) {
         Post post = postRepository.findByIdAndIsDeletedFalse(postId).orElseThrow(
                 () -> new ApiException(NOT_FOUND_POST_ERROR));
+        if (loginuser != null) {
+            User loginUser = userRepository.findById(loginuser.getId()).orElseThrow(
+                    () -> new ApiException(NOT_FOUND_USER_ERROR)
+            );
 
-        return new PostDetailsResponseDto(post);
+            if (!loginuser.getRole().equals(UserRoleEnum.ADMIN)) {
+                List<Long> followingIdList = new ArrayList<>();
+                List<Follow> follows = loginUser.getFollowings();
+                for (Follow follow : follows) {
+                    followingIdList.add(follow.getToUser().getId());
+                }
+                return new PostDetailsResponseDto(post, loginUser, followingIdList);
+            }
+        }
+        return new PostDetailsResponseDto(post, loginuser, null);
     }
+
 
     @Transactional(readOnly = true)
     public List<PostResponseDto> getUserLikedPosts(
@@ -206,7 +220,7 @@ public class PostService {
         Page<Post> posts = postRepository.findPostsByLikes(userId, pageable);
 
         return posts.stream()
-                .map(PostResponseDto::new).toList();
+                .map(post -> new PostResponseDto(post)).toList();
     }
 
     @Transactional(readOnly = true)
@@ -223,7 +237,7 @@ public class PostService {
         Page<Post> posts = postRepository.findPostsByFollowingUsers(user.getId(), pageable);
 
         return posts.stream()
-                .map(PostResponseDto::new).toList();
+                .map(post -> new PostResponseDto(post)).toList();
     }
 
     boolean validateFollowing(User findUser, User authUser) {
