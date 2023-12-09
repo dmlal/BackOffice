@@ -44,7 +44,7 @@ public class User extends BaseEntity {
     private String profileImageUrl;
 
     @Column(name = "is_private")
-    private Boolean isPrivate;
+    private Boolean isPrivate = false;
 
     @Column(name = "kakao_id")
     private Long kakaoId;
@@ -57,14 +57,17 @@ public class User extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private UserRoleEnum role;
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
+    private List<Like> likes = new ArrayList<>();
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<PasswordHistory> passwordHistories = new ArrayList<>();
 
-    @OneToMany(mappedBy = "following")  // 팔로잉을 찾으면 follower를 불러온다
-    private List<Follow> followers = new ArrayList<>();
+    @OneToMany(mappedBy = "toUser")
+    private List<Follow> followers = new ArrayList<>();//내 팔로워
 
-    @OneToMany(mappedBy = "follower")   // following
-    private List<Follow> followings = new ArrayList<>();
+    @OneToMany(mappedBy = "fromUser")
+    private List<Follow> followings = new ArrayList<>();//내가 팔로잉한 유저
 
     public User updateProfile(ProfileUpdateRequestDto requestDto) {
         this.nickname = requestDto.getNickname();
@@ -87,18 +90,11 @@ public class User extends BaseEntity {
         this.role = role;
     }
 
-//    public List<User> getFollowerListAll() {
-//        this.followerList.stream().map(follow -> follow.getFollower()).toList();
-//    }   팔로우서비스보다 이게 더 낫다.  JPQL만 잘쓴다면..
+    public void block() {
+        this.role = UserRoleEnum.BLOCK;
+    }
 
-    // 좋아요와 1대다
-    @OneToMany(mappedBy = "user")
-    private List<Like> likes;
-
-
-    // 팔로우와 다대 1
-
-    public void addLike(Like like) {
-        likes.add(like);
+    public void unblock() {
+        this.role = UserRoleEnum.USER;
     }
 }

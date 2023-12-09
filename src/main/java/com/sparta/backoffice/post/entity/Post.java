@@ -39,7 +39,7 @@ public class Post extends BaseEntity {
     @Column
     private boolean isDeleted = false;
 
-    @OneToMany(mappedBy = "post",cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
     private List<Like> likes = new ArrayList<>();
 
     public Post(PostRequestDto requestDto, Post parentPost, User user) {
@@ -60,5 +60,11 @@ public class Post extends BaseEntity {
     public void changeStateIsDeleted() {
         this.content = "이 게시물은 작성자에 의해 삭제되었습니다.";
         this.isDeleted = true;
+    }
+
+    public void changeStateIsDeletedAndRemoveWriter() {
+        this.user = null;
+        this.isDeleted = true;
+        this.content = "작성자가 탈퇴하였습니다.";
     }
 }
