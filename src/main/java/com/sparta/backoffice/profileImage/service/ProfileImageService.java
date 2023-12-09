@@ -43,5 +43,8 @@ public class ProfileImageService {
 
         String fileName = Long.toString(userId);
         s3Uploader.deleteFile(fileName);
+
+        requestUser.setProfileImageUrl(null);
+        userRepository.save(requestUser);
     }
 }
