@@ -3,6 +3,7 @@ package com.sparta.backoffice.post.entity;
 import com.sparta.backoffice.global.entity.BaseEntity;
 import com.sparta.backoffice.like.entity.Like;
 import com.sparta.backoffice.post.dto.PostRequestDto;
+import com.sparta.backoffice.post.dto.PostUpdateDto;
 import com.sparta.backoffice.user.entity.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -26,7 +27,7 @@ public class Post extends BaseEntity {
     private String content;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
-    private List<PostImage> images;
+    private List<PostImage> images = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_post_id")
@@ -56,7 +57,7 @@ public class Post extends BaseEntity {
         this.user = user;
     }
 
-    public void update(PostRequestDto requestDto) {
+    public void update(PostUpdateDto requestDto) {
         this.content = requestDto.getContent();
     }
 

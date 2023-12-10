@@ -1,6 +1,7 @@
 package com.sparta.backoffice.post.dto;
 
 import com.sparta.backoffice.post.entity.Post;
+import com.sparta.backoffice.post.entity.PostImage;
 import com.sparta.backoffice.user.dto.UserSimpleDto;
 import lombok.Getter;
 
@@ -24,6 +25,7 @@ public class PostResponseDto {
     public PostResponseDto(Post post) {
         this.id = post.getId();
         this.content = post.getContent();
+        this.imageUrls = post.getImages().stream().map(PostImage::getImageUrl).toList();
         this.createdAt = post.getCreatedAt();
         this.modifiedAt = post.getModifiedAt();
         this.replyCount = post.getChildPosts().size();
