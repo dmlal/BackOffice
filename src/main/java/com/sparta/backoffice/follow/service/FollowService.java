@@ -97,7 +97,7 @@ public class FollowService {
 
     void validateFollowing(User findUser, User authUser) {
         if (!authUser.getRole().equals(UserRoleEnum.ADMIN)) {
-            if (findUser.getIsPrivate() && findUser.equals(authUser)) {
+            if (findUser.getIsPrivate() && findUser.getId().equals(authUser.getId())) {
                 followRepository.findByFromUserAndToUser(authUser, findUser).orElseThrow(
                         () -> new ApiException(IS_PRIVATE_USER)
                 );
