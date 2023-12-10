@@ -19,15 +19,15 @@ public class Follow {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name ="follower_id") // user_id
-    private User follower;
+    @JoinColumn(name = "from_id") // 로그인한 아이디
+    private User fromUser;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "following_id") // following_id
-    private User following;
+    @JoinColumn(name = "to_id") // 로그인한 사람한테 팔로우를 받는 아이디
+    private User toUser;
 
-    public Follow(User authUser, User toFolloewUser) {
-        this.follower = authUser;
-        this.following = toFolloewUser;
+    public Follow(User authUser, User toUser) {
+        this.fromUser = authUser;
+        this.toUser = toUser;
     }
 }

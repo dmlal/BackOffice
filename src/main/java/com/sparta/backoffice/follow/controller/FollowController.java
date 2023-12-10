@@ -11,13 +11,11 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static com.sparta.backoffice.global.constant.ErrorCode.ALREADY_UNFOLLOW_USER;
 import static com.sparta.backoffice.global.constant.ResponseCode.*;
 
 @RestController
@@ -30,6 +28,7 @@ public class FollowController {
 
     @Operation(summary = "유저 팔로우", description = "유저 팔로우 API")
     @ApiResponses(value = {
+            @ApiResponse(responseCode = "403", description = "권한 없음", content = @Content(schema = @Schema(implementation = BaseResponse.class))),
             @ApiResponse(
                     responseCode = "200",
                     description = "팔로우 성공",
@@ -46,9 +45,9 @@ public class FollowController {
                     content = @Content(schema = @Schema(implementation = BaseResponse.class))
             ),
             @ApiResponse(
-            responseCode = "400",
-            description = "이미 팔로우한 사용자입니다.",
-            content = @Content(schema = @Schema(implementation = BaseResponse.class))
+                    responseCode = "400",
+                    description = "이미 팔로우한 사용자입니다.",
+                    content = @Content(schema = @Schema(implementation = BaseResponse.class))
             )
     })
     @PostMapping("/{userId}")
@@ -58,11 +57,12 @@ public class FollowController {
 
         return ResponseEntity
                 .status(FOLLOW_USER.getHttpStatus())
-                .body(BaseResponse.of(FOLLOW_USER,""));
+                .body(BaseResponse.of(FOLLOW_USER, ""));
     }
 
     @Operation(summary = "유저 언팔로우", description = "유저 언팔로우 API")
     @ApiResponses(value = {
+            @ApiResponse(responseCode = "403", description = "권한 없음", content = @Content(schema = @Schema(implementation = BaseResponse.class))),
             @ApiResponse(
                     responseCode = "200",
                     description = "언팔로우",
@@ -91,10 +91,10 @@ public class FollowController {
 
         return ResponseEntity
                 .status(UNFOLLOW_USER.getHttpStatus())
-                .body(BaseResponse.of(UNFOLLOW_USER,""));
+                .body(BaseResponse.of(UNFOLLOW_USER, ""));
     }
 
-    @Operation(summary = "팔로워리스트", description = "유저 팔로우리스트 API")
+    @Operation(summary = "팔로워리스트", description = "유저 팔로워리스트 API")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
@@ -111,8 +111,8 @@ public class FollowController {
     public ResponseEntity<BaseResponse<List<FollowUserResponseDto>>> getFollowerList(@PathVariable Long userId, @AuthUser User user) {
         List<FollowUserResponseDto> responseDto = followService.getFollowerList(userId, user);
         return ResponseEntity
-                .status(GET_FOLLOW_LIST.getHttpStatus())
-                .body(BaseResponse.of(GET_FOLLOW_LIST, responseDto));
+                .status(GET_FOLLOWER_LIST.getHttpStatus())
+                .body(BaseResponse.of(GET_FOLLOWER_LIST, responseDto));
     }
 
     @Operation(summary = "팔로잉 리스트", description = "유저 팔로잉 리스트 API")
@@ -134,7 +134,5 @@ public class FollowController {
         return ResponseEntity
                 .status(GET_FOLLOWING_LIST.getHttpStatus())
                 .body(BaseResponse.of(GET_FOLLOWING_LIST, responseDto));
-
     }
-
 }

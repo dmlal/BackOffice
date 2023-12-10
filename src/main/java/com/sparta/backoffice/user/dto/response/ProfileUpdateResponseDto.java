@@ -22,7 +22,7 @@ public class ProfileUpdateResponseDto {
     public ProfileUpdateResponseDto(User newProfile) {
         this.nickname = newProfile.getNickname();
         this.intro = newProfile.getIntro();
-        this.link = newProfile.getIntro();
+        this.link = newProfile.getLink();
         this.isPrivate = newProfile.getIsPrivate();
     }
 }

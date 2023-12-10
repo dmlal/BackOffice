@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,7 +22,7 @@ import org.springframework.web.bind.annotation.*;
 import static com.sparta.backoffice.global.constant.ResponseCode.UPDATE_PASSWORD;
 import static com.sparta.backoffice.global.constant.ResponseCode.UPDATE_PROFILE;
 
-
+@Tag(name = "User 컨트롤러", description = "User 컨트롤러 API")
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
