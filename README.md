@@ -1,4 +1,4 @@
-# Y SNS
+<img src="https://capsule-render.vercel.app/api?type=waving&color=768CFF&height=160&text=Y%20SNS&fontSize=100&fontColor=2322F0&section=footer&animation=fadeIn" />
 
 ### ✅ 프로젝트 소개
 - Threads, X 를 벤치마킹 하여 SNS API 서버를 구현하였습니다.
