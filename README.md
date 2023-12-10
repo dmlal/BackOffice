@@ -60,6 +60,8 @@ Swagger 링크: http://localhost:8080/swagger-ui/index.html#
 
 ![image](https://github.com/dmlal/BackOffice/assets/73427028/17e7f3b7-aa99-4e06-bb7c-e7f1e031ff92)
 
+![image](https://github.com/dmlal/BackOffice/assets/73427028/5cf02c79-d3f9-4484-bfe2-0577aef13817)
+
 ---
 ## ✅ 와이어 프레임
 ![image](https://github.com/dmlal/BackOffice/assets/73427028/ff50abaf-73c0-4130-958f-8a627111720c)
