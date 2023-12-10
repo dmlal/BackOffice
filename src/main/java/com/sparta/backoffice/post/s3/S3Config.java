@@ -1,4 +1,4 @@
-package com.sparta.backoffice.profileImage.config;
+package com.sparta.backoffice.post.s3;
 
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;

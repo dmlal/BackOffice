@@ -7,8 +7,10 @@ import com.sparta.backoffice.global.exception.ApiException;
 import com.sparta.backoffice.post.dto.PostDetailsResponseDto;
 import com.sparta.backoffice.post.dto.PostRequestDto;
 import com.sparta.backoffice.post.dto.PostResponseDto;
+import com.sparta.backoffice.post.dto.PostUpdateDto;
 import com.sparta.backoffice.post.entity.Post;
 import com.sparta.backoffice.post.repository.PostRepository;
+import com.sparta.backoffice.post.s3.S3Manager;
 import com.sparta.backoffice.user.constant.UserRoleEnum;
 import com.sparta.backoffice.user.entity.User;
 import com.sparta.backoffice.user.repository.UserRepository;
@@ -20,6 +22,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,13 +33,25 @@ import static com.sparta.backoffice.global.constant.ErrorCode.*;
 @Service
 @RequiredArgsConstructor
 public class PostService {
-
+    private final short MAX_IMAGES = 4;
     private final PostRepository postRepository;
+    private final PostImageService postImageService;
     private final UserRepository userRepository;
     private final FollowRepository followRepository;
+    private final S3Manager s3Manager;
 
-    public PostResponseDto createPost(PostRequestDto requestDto, User user) {
+    @Transactional
+    public PostResponseDto createPost(
+            PostRequestDto requestDto,
+            User user,
+            MultipartFile[] images
+    ) {
         Post post;
+
+        // 등록되는 이미지가 MAX_IMAGES 초과일 경우
+        if (images.length > 4) {
+            throw new ApiException(MAX_IMAGE_LIMIT_OVER);
+        }
 
         if (requestDto.getParentPostId() != null) {
             //부모가 존재
@@ -56,12 +71,28 @@ public class PostService {
             //부모가 존재하지 않음
             post = new Post(requestDto, user);
         }
-        Post savedPost = postRepository.save(post);
+
+        Post savedPost = postRepository.save(postRepository.save(post));
+
+        // 이미지 업로드
+        try {
+            postImageService.uploadImages(savedPost, images);
+        } catch (Exception e) {
+            // 예외 발생시 S3와 DB 사이의 데이터 무결성을 보장하지 않고 주기적으로 스케쥴러로 처리한다
+            // 즉각적인 무결성을 보장하기 위한 비용이 스케쥴링으로 처리하는 비용보다 비싸다
+            throw new ApiException(CAN_NOT_READ_IMAGE);
+        }
+
         return new PostResponseDto(savedPost);
     }
 
     @Transactional
-    public PostResponseDto updatePost(PostRequestDto requestDto, Long postId, User user) {
+    public PostResponseDto updatePost(
+            PostUpdateDto requestDto,
+            Long postId,
+            User user,
+            MultipartFile[] images
+    ) {
 
         Post post = postRepository.findByIdAndIsDeletedFalse(postId).orElseThrow(
                 () -> new ApiException(NOT_FOUND_POST_ERROR));
@@ -70,8 +101,29 @@ public class PostService {
             throw new ApiException(CAN_NOT_MODIFY_ERROR);
         }
 
+        // 등록되는 이미지가 MAX_IMAGES 초과일 경우
+        if (post.getImages().size() + images.length - requestDto.getDeleteFileUrls().size() > MAX_IMAGES) {
+            throw new ApiException(MAX_IMAGE_LIMIT_OVER);
+        }
+
         //내용 수정
         post.update(requestDto);
+
+        // 새로 추가한 이미지 업로드
+        try {
+            postImageService.uploadImages(post, images);
+        } catch (Exception e) {
+            throw new ApiException(CAN_NOT_READ_IMAGE);
+        }
+        // 안 쓰는 이미지 삭제
+        try {
+            for (String url : requestDto.getDeleteFileUrls()) {
+                postImageService.deleteImage(post, url);
+            }
+        } catch (Exception e) {
+            // 삭제 중 오류 발생하면 이미 삭제한 파일은 S3 버전관리 or 로컬에 저장 아니면 해결 못할 듯..? 일단 보류
+            throw new ApiException(INTERNAL_SERVER_ERROR);
+        }
 
         return new PostResponseDto(post);
     }
@@ -116,6 +168,7 @@ public class PostService {
 
             //자식부터 부모까지 순차적으로 삭제한다.
             for (Long deletedId : tobedeletedList) {
+                postImageService.deleteAll(deletedId);
                 postRepository.deleteById(deletedId);
             }
         }
@@ -240,6 +293,3 @@ public class PostService {
         }
     }
 }
-
-
-

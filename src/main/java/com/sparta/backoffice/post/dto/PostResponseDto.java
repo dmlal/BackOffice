@@ -1,8 +1,9 @@
 package com.sparta.backoffice.post.dto;
 
-import com.sparta.backoffice.global.dto.BaseResponse;
+
 import com.sparta.backoffice.post.entity.Post;
 import com.sparta.backoffice.user.constant.UserRoleEnum;
+import com.sparta.backoffice.post.entity.PostImage;
 import com.sparta.backoffice.user.dto.UserSimpleDto;
 import com.sparta.backoffice.user.entity.User;
 import lombok.Getter;
@@ -14,6 +15,7 @@ import java.util.List;
 public class PostResponseDto {
     Long id;
     String content;
+    List<String> imageUrls;
     LocalDateTime createdAt;
     LocalDateTime modifiedAt;
     UserSimpleDto userSimpleDto;
@@ -25,6 +27,8 @@ public class PostResponseDto {
 
     public PostResponseDto(Post post) {
         this.id = post.getId();
+        this.content = post.getContent();
+        this.imageUrls = post.getImages().stream().map(PostImage::getImageUrl).toList();
         this.createdAt = post.getCreatedAt();
         this.modifiedAt = post.getModifiedAt();
         this.replyCount = post.getChildPosts().size();
@@ -68,6 +72,5 @@ public class PostResponseDto {
         } else {
             this.content = post.getContent();
         }
-
     }
 }
