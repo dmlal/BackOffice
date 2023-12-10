@@ -4,6 +4,7 @@ import com.sparta.backoffice.global.annotation.AuthUser;
 import com.sparta.backoffice.global.dto.BaseResponse;
 import com.sparta.backoffice.post.dto.PostRequestDto;
 import com.sparta.backoffice.post.dto.PostResponseDto;
+import com.sparta.backoffice.post.dto.PostUpdateDto;
 import com.sparta.backoffice.post.service.PostService;
 import com.sparta.backoffice.user.entity.User;
 import io.swagger.v3.oas.annotations.Operation;
@@ -59,8 +60,12 @@ public class PostController {
             @ApiResponse(responseCode = "400", description = "내용이 공백이거나 140자 초과일 때", content = @Content(schema = @Schema(implementation = BaseResponse.class)))
     })
     @PutMapping("/{postId}")
-    public ResponseEntity<BaseResponse<PostResponseDto>> updatePost(@PathVariable Long postId, @RequestBody @Valid PostRequestDto requestDto, @AuthUser User user) {
-        PostResponseDto postResponseDto = postService.updatePost(requestDto, postId, user);
+    public ResponseEntity<BaseResponse<PostResponseDto>> updatePost(
+            @PathVariable Long postId,
+            @RequestPart("data") @Valid PostUpdateDto requestDto,
+            @RequestParam("images") MultipartFile[] images,
+            @AuthUser User user) {
+        PostResponseDto postResponseDto = postService.updatePost(requestDto, postId, user, images);
         return ResponseEntity.status(HttpStatus.OK).body(
                 BaseResponse.of(MODIFIED_POST, postResponseDto));
     }
@@ -80,6 +85,4 @@ public class PostController {
         return ResponseEntity.status(HttpStatus.OK).body(
                 BaseResponse.of(DELETED_POST, ""));
     }
-
-
 }
