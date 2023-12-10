@@ -75,6 +75,7 @@ public class FollowService {
                 follow -> {
                     return new FollowUserResponseDto(follow.getFromUser());
                 }).toList();
+
     }
 
     public List<FollowUserResponseDto> getFollowingList(Long userId, User authUser) {
@@ -86,6 +87,7 @@ public class FollowService {
                 follow -> {
                     return new FollowUserResponseDto(follow.getToUser());
                 }).toList();
+
     }
 
     private User foundUser(Long userId) {
@@ -95,7 +97,7 @@ public class FollowService {
 
     void validateFollowing(User findUser, User authUser) {
         if (!authUser.getRole().equals(UserRoleEnum.ADMIN)) {
-            if (findUser.getIsPrivate()) {
+            if (findUser.getIsPrivate() && findUser.equals(authUser)) {
                 followRepository.findByFromUserAndToUser(authUser, findUser).orElseThrow(
                         () -> new ApiException(IS_PRIVATE_USER)
                 );

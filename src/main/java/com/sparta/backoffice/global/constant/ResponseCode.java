@@ -27,6 +27,8 @@ public enum ResponseCode {
     DELETED_USER(200, "회원 탈퇴 성공"),
     DELETED_LIKE(200, "좋아요 취소 성공"),
     LOGOUT(200, "로그아웃 성공"),
+    UPDATE_PROFILE_IMAGE(200, "프로필 이미지 변경 완료"),
+    DELETE_PROFILE_IMAGE(200,"프로필 이미지 삭제 완료"),
     BLOCK_USER(200, "회원 차단 성공"),
     UNBLOCK_USER(200, "회원 차단 해지 성공"),
 
