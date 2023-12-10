@@ -1,18 +1,28 @@
 package com.sparta.backoffice.user.entity;
 
+import java.util.ArrayList;
+import java.util.List;
 
 import com.sparta.backoffice.follow.entity.Follow;
 import com.sparta.backoffice.global.entity.BaseEntity;
 import com.sparta.backoffice.like.entity.Like;
 import com.sparta.backoffice.post.entity.Post;
 import com.sparta.backoffice.user.constant.UserRoleEnum;
-
 import com.sparta.backoffice.user.dto.request.ProfileUpdateRequestDto;
-import jakarta.persistence.*;
-import lombok.*;
 
-import java.util.ArrayList;
-import java.util.List;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
 
 @Entity
@@ -44,27 +54,35 @@ public class User extends BaseEntity {
     private String profileImageUrl;
 
     @Column(name = "is_private")
-    private Boolean isPrivate;
+    private Boolean isPrivate = false;
 
+    @Setter
     @Column(name = "kakao_id")
-    private Long kakaoId;
+    private String kakaoId;
 
+    @Setter
     @Column(name = "naver_id")
-    private Long naverId;
+    private String naverId;
 
     @OneToMany(mappedBy = "user")
     private List<Post> postList;
 
     @Enumerated(EnumType.STRING)
     private UserRoleEnum role;
+
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
+    private List<Like> likes = new ArrayList<>();
+
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<PasswordHistory> passwordHistories = new ArrayList<>();
 
-    @OneToMany(mappedBy = "following")  // 팔로잉을 찾으면 follower를 불러온다
-    private List<Follow> followers = new ArrayList<>();
+    @OneToMany(mappedBy = "toUser")
+    private List<Follow> followers = new ArrayList<>();//내 팔로워
 
-    @OneToMany(mappedBy = "follower")   // following
-    private List<Follow> followings = new ArrayList<>();
+    @OneToMany(mappedBy = "fromUser")
+    private List<Follow> followings = new ArrayList<>();//내가 팔로잉한 유저
 
     public void setProfileImageUrl(String profileImageUrl) {
         this.profileImageUrl = profileImageUrl;
@@ -91,18 +109,11 @@ public class User extends BaseEntity {
         this.role = role;
     }
 
-//    public List<User> getFollowerListAll() {
-//        this.followerList.stream().map(follow -> follow.getFollower()).toList();
-//    }   팔로우서비스보다 이게 더 낫다.  JPQL만 잘쓴다면..
+    public void block() {
+        this.role = UserRoleEnum.BLOCK;
+    }
 
-    // 좋아요와 1대다
-    @OneToMany(mappedBy = "user")
-    private List<Like> likes;
-
-
-    // 팔로우와 다대 1
-
-    public void addLike(Like like) {
-        likes.add(like);
+    public void unblock() {
+        this.role = UserRoleEnum.USER;
     }
 }

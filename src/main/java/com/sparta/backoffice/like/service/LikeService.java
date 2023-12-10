@@ -1,12 +1,13 @@
 package com.sparta.backoffice.like.service;
 
+import com.sparta.backoffice.follow.repository.FollowRepository;
 import com.sparta.backoffice.global.constant.ErrorCode;
 import com.sparta.backoffice.global.exception.ApiException;
-import com.sparta.backoffice.like.dto.LikeUserResponseDto;
-import com.sparta.backoffice.like.repository.LikeRepository;
 import com.sparta.backoffice.like.entity.Like;
+import com.sparta.backoffice.like.repository.LikeRepository;
 import com.sparta.backoffice.post.entity.Post;
 import com.sparta.backoffice.post.repository.PostRepository;
+import com.sparta.backoffice.user.constant.UserRoleEnum;
 import com.sparta.backoffice.user.dto.UserSimpleDto;
 import com.sparta.backoffice.user.entity.User;
 import lombok.RequiredArgsConstructor;
@@ -18,12 +19,11 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static com.sparta.backoffice.global.constant.ErrorCode.CAN_NOT_LIKE_PRIVATE_POST_ERROR;
 import static com.sparta.backoffice.global.constant.ErrorCode.NOT_FOUND_POST_ERROR;
-import static com.sparta.backoffice.global.constant.ErrorCode.NOT_FOUND_USER_ERROR;
 
 @Service
 @RequiredArgsConstructor
@@ -31,19 +31,28 @@ public class LikeService {
 
     private final LikeRepository likeRepository;
     private final PostRepository postRepository;
+    private final FollowRepository followRepository;
 
     @Transactional
     public void like(User user, Long postId) {
         Post post = postRepository.findByIdAndIsDeletedFalse(postId)
                 .orElseThrow(() -> new ApiException(ErrorCode.NOT_FOUND_POST_ERROR));
         // 자기 글에 좋아요 못함
-        if (Objects.equals(post.getUser().getId(), user.getId())) {
+        if (post.getUser() != null && Objects.equals(post.getUser().getId(), user.getId())) {
             throw new ApiException(ErrorCode.SELF_LIKE_ERROR);
         }
         // 이미 좋아요 했으면 좋아요 못함
         if (likeRepository.existsLikeByUserIdAndPostId(user.getId(), postId)) {
             throw new ApiException(ErrorCode.ALREADY_LIKED_ERROR);
         }
+
+        // 본인이 아닌 다른 사람의 비공개 계정이 쓴 글에 좋아요 달 수 없음
+        if (!user.getRole().equals(UserRoleEnum.ADMIN)) {
+            if (!post.getUser().equals(user) && post.getUser().getIsPrivate()) {
+                validateFollowing(post.getUser(), user);
+            }
+        }
+
 
         Like like = new Like(user, post);
         likeRepository.save(like);
@@ -81,5 +90,13 @@ public class LikeService {
         }).toList();
 
         return likedUsers;
+    }
+
+    void validateFollowing(User findUser, User authUser) {
+        if (findUser.getIsPrivate()) {
+            followRepository.findByFromUserAndToUser(authUser, findUser).orElseThrow(
+                    () -> new ApiException(CAN_NOT_LIKE_PRIVATE_POST_ERROR)
+            );
+        }
     }
 }
