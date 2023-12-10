@@ -79,7 +79,9 @@ public class AuthService {
 	public void logout(HttpServletRequest request) {
 		String accessToken = jwtProvider.getTokenFromRequestHeader(request);
 
-		jwtProvider.validateToken(accessToken);
+		if(!jwtProvider.validateToken(accessToken)){
+			throw new ApiException(INVALID_TOKEN);
+		}
 
 		//토큰에서 username, expiration 추출
 		Claims claims = jwtProvider.getUserInfoFromToken(accessToken);
