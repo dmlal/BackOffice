@@ -82,6 +82,7 @@ public class UserService {
     }
 
 
+
     public List<UserInfoDto> getAllUsers(Integer cursor, Integer size, String dir) {
         Sort sort = Sort.by(dir.equalsIgnoreCase("desc") ?
                 Sort.Direction.DESC : Sort.Direction.ASC, "createdAt");
@@ -92,6 +93,7 @@ public class UserService {
 
         return users.stream().map(UserInfoDto::new).toList();
     }
+
 
     @Transactional
     public void deleteUser(Long userId, User adminUser) {
@@ -142,15 +144,16 @@ public class UserService {
         return new UserInfoDto(findUser);
     }
 
-    private User foundUser(Long userId) {
+    public User foundUser(Long userId) {
         return userRepository.findById(userId).orElseThrow(() ->
                 new ApiException(NOT_FOUND_USER_ERROR));
     }
 
-    private void checkUserPermission(User user, User authUser) {
+    public void checkUserPermission(User user, User authUser) {
         if (!user.getUsername().equals(authUser.getUsername())) {
             throw new ApiException(DENIED_AUTHORITY);
         }
     }
+
 
 }

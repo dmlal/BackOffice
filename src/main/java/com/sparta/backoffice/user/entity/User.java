@@ -66,11 +66,14 @@ public class User extends BaseEntity {
 
     @OneToMany(mappedBy = "user")
     private List<Post> postList;
+
     @Enumerated(EnumType.STRING)
     private UserRoleEnum role;
 
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
     private List<Like> likes = new ArrayList<>();
+
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<PasswordHistory> passwordHistories = new ArrayList<>();
@@ -80,6 +83,10 @@ public class User extends BaseEntity {
 
     @OneToMany(mappedBy = "fromUser")
     private List<Follow> followings = new ArrayList<>();//내가 팔로잉한 유저
+
+    public void setProfileImageUrl(String profileImageUrl) {
+        this.profileImageUrl = profileImageUrl;
+    }
 
     public User updateProfile(ProfileUpdateRequestDto requestDto) {
         this.nickname = requestDto.getNickname();

@@ -75,6 +75,7 @@ public class FollowService {
                 follow -> {
                     return new FollowUserResponseDto(follow.getFromUser());
                 }).toList();
+
     }
 
     public List<FollowUserResponseDto> getFollowingList(Long userId, User authUser) {
@@ -86,6 +87,7 @@ public class FollowService {
                 follow -> {
                     return new FollowUserResponseDto(follow.getToUser());
                 }).toList();
+
     }
 
     private User foundUser(Long userId) {

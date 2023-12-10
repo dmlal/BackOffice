@@ -18,4 +18,8 @@ public class UserSimpleDto {
         this.profileImageUrl = user.getProfileImageUrl();
         this.isPrivate = user.getIsPrivate();
     }
+
+    public UserSimpleDto(String fileUrl) {
+        this.profileImageUrl = fileUrl;
+    }
 }
