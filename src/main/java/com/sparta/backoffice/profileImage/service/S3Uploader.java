@@ -19,7 +19,6 @@ import java.util.Objects;
 public class S3Uploader {
 
     private final AmazonS3Client amazonS3Client;
-    private final String POST_PATH_PREFIX = "posts/";
 
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;

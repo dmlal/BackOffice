@@ -1,6 +1,5 @@
 package com.sparta.backoffice.post.service;
 
-import com.amazonaws.services.s3.model.S3Object;
 import com.sparta.backoffice.follow.entity.Follow;
 import com.sparta.backoffice.follow.repository.FollowRepository;
 import com.sparta.backoffice.global.constant.ErrorCode;
@@ -11,6 +10,7 @@ import com.sparta.backoffice.post.dto.PostResponseDto;
 import com.sparta.backoffice.post.dto.PostUpdateDto;
 import com.sparta.backoffice.post.entity.Post;
 import com.sparta.backoffice.post.repository.PostRepository;
+import com.sparta.backoffice.post.s3.S3Manager;
 import com.sparta.backoffice.user.constant.UserRoleEnum;
 import com.sparta.backoffice.user.entity.User;
 import com.sparta.backoffice.user.repository.UserRepository;
@@ -38,7 +38,7 @@ public class PostService {
     private final PostImageService postImageService;
     private final UserRepository userRepository;
     private final FollowRepository followRepository;
-    private final S3Uploader s3Uploader;
+    private final S3Manager s3Manager;
 
     @Transactional
     public PostResponseDto createPost(
