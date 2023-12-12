@@ -36,7 +36,7 @@
   > AWS S3,
   > MySQL 8.1,
   > Gradle 8.4,
-  > SpringBoot 3.1.5,
+  > SpringBoot 3.2.0,
   > JPA
   
 - 언어
