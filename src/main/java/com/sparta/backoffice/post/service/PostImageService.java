@@ -1,5 +1,7 @@
 package com.sparta.backoffice.post.service;
 
+import com.sparta.backoffice.global.constant.ErrorCode;
+import com.sparta.backoffice.global.exception.ApiException;
 import com.sparta.backoffice.post.entity.Post;
 import com.sparta.backoffice.post.entity.PostImage;
 import com.sparta.backoffice.post.repository.PostImageRepository;
@@ -23,10 +25,14 @@ public class PostImageService {
     @Transactional(propagation = Propagation.MANDATORY)
     public void uploadImages(Post post, MultipartFile[] images) throws Exception {
         for (MultipartFile image : images) {
+            if (image.getContentType() == null) {
+                throw new RuntimeException();
+            }
             String imageUrl = s3Manager.uploadMultipartFileWithPublicRead(
                     POST_PATH_PREFIX + post.getId().toString() + "/",
                     image
             );
+
 
             PostImage postImage = new PostImage(post, imageUrl);
             postImageRepository.save(postImage);

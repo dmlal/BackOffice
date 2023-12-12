@@ -41,7 +41,7 @@ public class PostController {
     })
     @PostMapping
     public ResponseEntity<BaseResponse<PostResponseDto>> createPost(
-            @RequestParam("images") MultipartFile[] images,
+            @RequestParam(name = "images",required = false) MultipartFile[] images,
             @RequestPart("data") @Valid PostRequestDto requestDto,
             @AuthUser User user
     ) {
